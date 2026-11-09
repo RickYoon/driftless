@@ -103,7 +103,7 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--mut);font-siz
   <div class="grid">
     <div><span class="n" data-ko="01 · 감지">01 · DETECT</span><b data-ko="제공자 웹훅">Provider webhook</b><p data-ko="API 회사가 새 스펙을 발행하면 규칙으로 비교합니다. 이름 변경, 주소 이동, 새 필수 값을 추측 없이 찾습니다.">The provider publishes a new spec. Driftless diffs it with rules, not guesses: renamed fields, moved endpoints, new required params.</p></div>
     <div><span class="n" data-ko="02 · 탐색">02 · SCAN</span><b data-ko="영향받는 호출만">Affected calls only</b><p data-ko="코드를 분석해 변경마다 그걸 쓰는 함수를 정확히 찾습니다. 영향이 없으면 조용히 있습니다.">Parses your code and maps each change to the exact functions that use it. No impact, no noise.</p></div>
-    <div><span class="n" data-ko="03 · 수정">03 · PATCH</span><b data-ko="범위 안에서만">Scoped fix</b><p data-ko="영향받는 함수 안에서만 고칩니다. 범위를 벗어난 수정은 자동으로 거부됩니다.">Edits only inside the affected functions. A range guard rejects any patch that reaches further.</p></div>
+    <div><span class="n" data-ko="03 · 수정">03 · PATCH</span><b data-ko="AI가 수정과 PR 작성">AI writes the fix</b><p data-ko="Claude가 수정 코드와 PR 설명을 씁니다. 영향받은 함수 밖을 건드리면 자동으로 거부됩니다.">Claude writes the patch and the PR description. Any edit outside the affected functions is rejected.</p></div>
     <div><span class="n" data-ko="04 · 증명">04 · PROVE</span><b data-ko="빨강 → 초록, 그다음 PR">Red → green, then PR</b><p data-ko="새 API로 내 테스트를 돌립니다. 통과하면 PR, 아니면 이유를 적은 이슈를 엽니다.">Runs your tests against the new API. A passing patch becomes a PR. Anything else becomes an issue with the reason.</p></div>
   </div>
 </div></section>
@@ -131,8 +131,8 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--mut);font-siz
 <pre class="snip"><span class="c">shop_client.py:17–19</span>  create_charge()   POST /v1/charges
 <span class="c">shop_client.py:22–24</span>  charge_status()   GET  /v1/charges/{id}
 <span class="c">shop_client.py:9–14 </span>  _call()           <span class="c">not affected</span></pre></div>
-    <div class="step"><div class="sn" data-ko="3 · 그 줄 안에서만 고친다">3 · Patch inside those lines only</div>
-      <p data-ko="수정은 기계적이고 영향받은 함수 안으로 제한됩니다. 수정 전후 파일을 비교해 허용 범위 밖이 바뀌면 거부합니다.">Rewrites are mechanical and scoped to the affected functions. A range guard compares old and new files and rejects any edit outside the allowed lines.</p>
+    <div class="step"><div class="sn" data-ko="3 · AI가 고치고, 범위를 검사한다">3 · AI patches, the guard checks the range</div>
+      <p data-ko="Claude가 바뀐 명세와 코드를 보고 수정본과 PR 설명을 씁니다. 수정 전후를 비교해 영향받은 함수 밖이 바뀌었으면 거부하고 규칙 기반 수정으로 대체합니다.">Claude reads the spec change and your code, then writes the patch and the PR description. The range guard compares old and new files and rejects any edit outside the affected functions, falling back to a rule-based patch.</p>
 <pre class="snip"><span class="d">-  r = _call("POST", "/v1/charges", {"amount": amount, ...})</span>
 <span class="a">+  r = _call("POST", "/v2/payments", {"idempotency_key": str(uuid.uuid4()), "amount": amount, ...})</span>
 <span class="d">-  return r["id"], r["status"]</span>
@@ -165,7 +165,7 @@ patched  vs v2   <span class="a">OK</span>
     <div class="card"><b data-ko="하지 않는 것">What it won't do</b><ul>
       <li data-ko="대체할 것 없이 필드가 삭제되면 <b>추측하지 않고</b> 이슈를 엽니다."><b>Never guesses</b> when a field is removed with no replacement. It opens an issue.</li>
       <li data-ko="<b>병합하지 않습니다.</b> 모든 변경은 사람이 검토합니다."><b>Never merges.</b> A human reviews every change.</li>
-      <li data-ko="이 버전에서는 <b>코드를 외부로 보내지 않습니다.</b> 수정은 로컬에서 도는 규칙 기반 변환입니다."><b>Never sends your code anywhere</b> in this build. Patches are deterministic codemods run locally.</li>
+      <li data-ko="<b>AI가 쓴 수정을 그대로 믿지 않습니다.</b> AI(Claude)에는 영향받는 파일만 보내고, 결과는 범위 검사와 테스트를 통과해야 PR이 됩니다. AI를 쓸 수 없으면 규칙 기반 수정으로 대체합니다."><b>Never trusts AI output blindly.</b> Only the affected file is sent to the AI (Claude). Its patch must pass the range guard and your tests to become a PR. Without AI, a rule-based patch is used.</li>
     </ul></div>
   </div>
 </div></section>

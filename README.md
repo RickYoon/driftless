@@ -7,7 +7,7 @@ Driftless subscribes your repo to the APIs it depends on. When the provider publ
 
 1. **Detects** the change from a provider webhook and diffs the spec with rules (renamed fields, moved endpoints, new required params, removals). No LLM guessing at this step.
 2. **Scans** your code (Python AST) and maps each change to the exact functions that use it. No impact, no noise.
-3. **Patches** only inside those functions. A range guard rejects any edit outside them.
+3. **Writes the fix with AI**: Claude reads the spec change and your file, then writes the patch and the PR description. A range guard rejects any edit outside the affected functions (falls back to a rule-based patch).
 4. **Proves** it: runs your tests against the live new API before and after the patch.
 5. **Opens a PR** only when the patch turns tests from red to green. If a change has no safe fix (for example, a field you read was removed), it opens an **issue with the reason** instead of touching your code.
 
@@ -23,7 +23,10 @@ python3 server.py          # http://127.0.0.1:8790  (landing)  ·  /app.html  (d
 python3 selftest.py        # end-to-end check on port 8791
 ```
 
-Python 3.10+ and git. Standard library only, no API keys.
+Python 3.10+, git, and the `claude` CLI for AI-written PRs (optional; falls back to rules). Standard library only.
+
+- `/app.html` — the user flow: repo + API → API changes → Claude writes the PR → verified → merge
+- `/console.html` — every internal step, and you can play the API provider
 
 ## What the self-test checks
 
@@ -34,7 +37,8 @@ Python 3.10+ and git. Standard library only, no API keys.
 ## Security model
 
 - Scope: read the repo, create branches and PRs. Never writes to `main`, never merges.
-- Patches are deterministic, scoped codemods run locally. In this build, customer code never leaves the machine.
+- Only the affected file is sent to the AI model (Claude, via the `claude` CLI). AI output is never trusted directly: range guard + your tests decide.
+- Without AI (`DRIFTLESS_AI=0` or no CLI), a deterministic rule-based patch is used.
 - Verification gate: no passing tests against the new API, no PR.
 
 ## Business model

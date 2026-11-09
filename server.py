@@ -65,7 +65,7 @@ SPEC0 = {
     },
 }
 
-S = {"spec": None, "main_spec": None, "events": [], "prs": [], "issues": [], "subscribed": True, "vendor_errors": [], "busy": False}
+S = {"spec": None, "main_spec": None, "connected": False, "repo": "", "api": "", "lang": "en", "events": [], "prs": [], "issues": [], "subscribed": True, "vendor_errors": [], "busy": False}
 RUN_LOCK = threading.Lock()
 
 
@@ -93,7 +93,7 @@ def reset():
     git("init", "-q", "-b", "main")
     git("add", ".")
     git("commit", "-qm", "acme-shop: checkout written against Paylite v1")
-    S.update(spec=copy.deepcopy(SPEC0), main_spec=copy.deepcopy(SPEC0), events=[], prs=[], issues=[], subscribed=True, vendor_errors=[], busy=False)
+    S.update(connected=False, repo="", api="", spec=copy.deepcopy(SPEC0), main_spec=copy.deepcopy(SPEC0), events=[], prs=[], issues=[], subscribed=True, vendor_errors=[], busy=False)
     ev("info", "acme-shop connected (read-only + PR scope). Subscribed to Paylite API updates.")
 
 
@@ -228,6 +228,36 @@ def patch(src, spec_old, changes, hits):
     return "\n".join(lines) + "\n", applied, unfixable
 
 
+# ---------------------------------------------------------------- 3b. AI patch (Claude writes code + PR, Driftless verifies)
+def ai_patch(src, old_spec, new_spec, changes, lang):
+    if os.environ.get("DRIFTLESS_AI") == "0":
+        raise RuntimeError("AI disabled")
+    lang_line = "Write TITLE and BODY in Korean." if lang == "ko" else "Write TITLE and BODY in English."
+    prompt = (
+        "You are Driftless, a bot that keeps a customer's code compatible with a third-party API.\n"
+        f"The API 'Paylite' changed from v{old_spec['version']} to v{new_spec['version']}. Breaking changes:\n"
+        + "\n".join("- " + c["desc"] for c in changes)
+        + "\n\nNew Paylite spec (JSON):\n" + json.dumps(new_spec, indent=1)
+        + "\n\nCustomer file shop_client.py:\n```python\n" + src + "```\n\n"
+        "Rules: change only what the new API requires. Keep function names and signatures. Do not touch unrelated lines. "
+        "For a new required request field, use the provider's x-migration-default expression and add any import it needs.\n"
+        f"{lang_line} Keep BODY under 120 words: what changed in the API, what you changed in the code, and that tests will verify it.\n"
+        "Respond in exactly this format and nothing else:\nTITLE: <one line>\nBODY:\n<markdown>\nFILE:\n```python\n<entire updated shop_client.py>\n```\n")
+    p = subprocess.run(["claude", "-p", prompt, "--model", "sonnet"], capture_output=True, text=True, timeout=150, cwd=STATE)
+    if p.returncode != 0:
+        raise RuntimeError((p.stderr or "claude CLI failed").strip()[:200])
+    out = p.stdout
+    t = re.search(r"^TITLE:\s*(.+)$", out, re.M)
+    b = re.search(r"BODY:\s*\n(.*?)\nFILE:", out, re.S)
+    f = re.search(r"FILE:\s*\n```(?:python)?\n(.*?)```", out, re.S)
+    if not (t and b and f):
+        raise RuntimeError("could not parse AI output")
+    code = f.group(1)
+    if not code.endswith("\n"):
+        code += "\n"
+    return code, t.group(1).strip(), b.group(1).strip()
+
+
 def range_guard(old, new, hits):
     allowed = set()
     for h in hits.values():
@@ -292,20 +322,33 @@ def _pipeline(old_spec, new_spec):
     ok0, sum0, err0 = run_tests(REPO)
     ev("test", ("Tests on main against live Paylite: " + ("passing" if ok0 else "FAILING")) + f"  ({sum0})",
        ok=ok0, items=[f"Paylite said: {e}" for e in err0])
-    new_src, applied, unfixable = patch(src, old_spec, breaking, hits)
+    rule_src, applied, unfixable = patch(src, old_spec, breaking, hits)
+    new_src, engine, title, body = rule_src, "rules", f"Adapt to Paylite API v{v1}", ""
     if unfixable:
         issue = {"id": len(S["issues"]) + 1, "title": f"Paylite v{v1} needs a human decision",
                  "items": [f"{u['desc']}: {u['why']}" for u in unfixable], "t": time.strftime("%H:%M:%S")}
         S["issues"].append(issue)
         ev("issue", f"Cannot verify a safe fix. Opened issue #{issue['id']} instead of a PR.", items=issue["items"])
         return
+    ev("ai", "Claude is writing the fix and the PR description…")
+    try:
+        ai_src, ai_title, ai_body = ai_patch(src, old_spec, new_spec, breaking, S["lang"])
+        if ai_src.strip() == src.strip():
+            raise RuntimeError("AI returned no change")
+        if range_guard(src, ai_src, hits):
+            new_src, engine, title, body = ai_src, "claude", ai_title, ai_body
+            ev("ai", "Claude wrote the patch and PR description.")
+        else:
+            ev("warn", "AI patch touched lines outside the affected functions. Falling back to the rule-based patch.")
+    except Exception as e:
+        ev("warn", f"AI unavailable ({e}). Falling back to the rule-based patch.")
     if new_src == src:
         ev("info", "No code change required.")
         return
     if not range_guard(src, new_src, hits):
         ev("error", "Range guard: patch touched lines outside the affected functions. Rejected.")
         return
-    ev("patch", f"Scoped patch generated: {len(applied)} change(s), only inside affected functions. Range guard passed.")
+    ev("patch", f"Scoped patch ready ({'Claude' if engine == 'claude' else 'rules'}): only inside affected functions. Range guard passed.")
     tmp = tempfile.mkdtemp(prefix="driftless-")
     for f in os.listdir(REPO):
         if f.endswith(".py"):
@@ -327,10 +370,10 @@ def _pipeline(old_spec, new_spec):
     with open(os.path.join(REPO, CLIENT), "w", encoding="utf-8") as fh:
         fh.write(new_src)
     git("add", CLIENT)
-    git("commit", "-qm", f"Adapt to Paylite API v{v1}")
+    git("commit", "-qm", title)
     git("checkout", "-q", "main")
     d = "".join(difflib.unified_diff(src.splitlines(True), new_src.splitlines(True), f"a/{CLIENT}", f"b/{CLIENT}"))
-    pr = {"id": len(S["prs"]) + 1, "title": f"Adapt to Paylite API v{v1}", "branch": branch, "diff": d,
+    pr = {"id": len(S["prs"]) + 1, "title": title, "body": body, "engine": engine, "branch": branch, "diff": d,
           "changes": [c["desc"] for c in applied], "before": sum0, "after": sum1, "state": "open",
           "t": time.strftime("%H:%M:%S"), "spec": copy.deepcopy(new_spec)}
     for p in S["prs"]:
@@ -371,7 +414,7 @@ class H(SimpleHTTPRequestHandler):
         if self.path == "/api/state":
             prs = [{k: v for k, v in p.items() if k != "spec"} for p in S["prs"]]
             return self._json(200, {"spec": S["spec"], "main_version": S["main_spec"]["version"], "events": S["events"], "prs": prs, "issues": S["issues"],
-                                    "subscribed": S["subscribed"], "busy": S["busy"],
+                                    "subscribed": S["subscribed"], "busy": S["busy"], "connected": S["connected"], "repo": S["repo"], "api": S["api"],
                                     "code": read(os.path.join(REPO, CLIENT))})
         return super().do_GET()
 
@@ -392,6 +435,35 @@ class H(SimpleHTTPRequestHandler):
             if S["busy"]:
                 return self._json(409, {"error": "pipeline still running"})
             new = copy.deepcopy(new)
+            new["version"] = S["spec"]["version"] + 1
+            S["spec"] = new
+            threading.Thread(target=_fire_webhook, args=(copy.deepcopy(S["main_spec"]), new), daemon=True).start()
+            return self._json(200, {"ok": True, "version": new["version"]})
+        if self.path == "/api/connect":
+            repo = (body.get("repo") or "").strip()
+            if not repo:
+                return self._json(400, {"error": "repo is required"})
+            S.update(connected=True, subscribed=True, repo=repo, api=body.get("api") or "Paylite API",
+                     lang="ko" if body.get("lang") == "ko" else "en")
+            ev("info", f"Connected {repo}. Watching {S['api']} for changes.")
+            return self._json(200, {"ok": True})
+        if self.path == "/api/demo-change":
+            if S["busy"]:
+                return self._json(409, {"error": "pipeline still running"})
+            if body.get("lang") in ("ko", "en"):
+                S["lang"] = body["lang"]
+            new = copy.deepcopy(S["spec"])
+            for e in new["endpoints"].values():
+                m = re.search(r"/v(\d+)/", e["path"])
+                n = int(m.group(1)) + 1 if m else 2
+                e["path"] = re.sub(r"/v\d+/(charges|payments)", f"/v{n}/payments", e["path"])
+                r = e["response"]
+                k = next((k for k, v in r.items() if v["canon"] == "status"), None)
+                if k == "status":
+                    r["state"] = r.pop("status")
+            req = new["endpoints"]["create_charge"]["request"]
+            if not any(v["canon"] == "idem" for v in req.values()):
+                req["idempotency_key"] = {"type": "str", "required": True, "canon": "idem", "x-migration-default": "str(uuid.uuid4())"}
             new["version"] = S["spec"]["version"] + 1
             S["spec"] = new
             threading.Thread(target=_fire_webhook, args=(copy.deepcopy(S["main_spec"]), new), daemon=True).start()
