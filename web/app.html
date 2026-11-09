@@ -9,11 +9,11 @@
 <style>
 :root{--bg:#000;--fg:#ededed;--mut:#a1a1a1;--dim:#6b6b6b;--line:#2e2e2e;--card:#0a0a0a;--ok:#3ecf8e;--bad:#ff6166;--blue:#52a8ff;--amber:#f5a524;--purple:#a78bfa}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.55 Geist,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.55 Geist,"Apple SD Gothic Neo",-apple-system,sans-serif;word-break:keep-all;-webkit-font-smoothing:antialiased}
 a{color:inherit;text-decoration:none}
 nav{display:flex;align-items:center;gap:14px;height:56px;padding:0 20px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#000;z-index:5}
 .logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px}
-.logo i{width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-bottom:14px solid #fff}
+.logo svg{width:22px;height:22px}
 .slash{color:#444;font-size:20px}
 .proj{font-weight:600}.badge{font-size:11px;font-weight:600;border:1px solid var(--line);border-radius:999px;padding:2px 8px;color:var(--mut)}
 .badge.pro{border-color:#fff;color:#fff}
@@ -24,6 +24,10 @@ nav{display:flex;align-items:center;gap:14px;height:56px;padding:0 20px;border-b
 .toggle{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--mut);cursor:pointer;user-select:none}
 .sw{width:34px;height:20px;border-radius:999px;background:#333;position:relative;transition:.2s}.sw::after{content:"";position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#fff;transition:.2s}
 .toggle.on .sw{background:var(--ok)}.toggle.on .sw::after{left:17px}
+.guide{border-bottom:1px solid var(--line);padding:14px 20px;background:#050505}
+.gq{font-size:14px;color:var(--mut);max-width:1100px}.gq b{color:var(--fg)}
+.gs{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}.gs>div{display:flex;gap:10px;align-items:center;flex:1;min-width:240px;border:1px solid var(--line);border-radius:10px;padding:8px 12px}
+.gs span{flex:none;width:24px;height:24px;border-radius:50%;background:var(--ok);color:#000;font-weight:800;display:grid;place-items:center;font-size:13px}.gs p{margin:0;font-size:13px;color:var(--mut)}.gs b{color:var(--fg)}
 main{display:grid;grid-template-columns:minmax(300px,1fr) minmax(320px,1.15fr) minmax(340px,1.25fr);gap:0;min-height:calc(100vh - 56px)}
 .col{border-right:1px solid var(--line);padding:18px;overflow:auto;max-height:calc(100vh - 56px)}.col:last-child{border-right:0}
 .h{display:flex;align-items:center;gap:8px;margin-bottom:4px}.h b{font-size:15px}
@@ -66,34 +70,42 @@ details summary{cursor:pointer;color:var(--mut);font-size:12.5px;margin-top:6px}
 </head>
 <body>
 <nav>
-  <a class="logo" href="/"><i></i>Driftless</a><span class="slash">/</span><span class="proj">acme-shop</span><span class="badge pro" id="plan">Pro</span>
+  <a class="logo" href="/"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="1" y="1" width="22" height="22" rx="7" fill="#3ecf8e"/><path d="M5.5 14.5c2-3 4-3 6 0s4 3 6 0" stroke="#000" stroke-width="2.2" stroke-linecap="round"/><path d="M5.5 9.5h13" stroke="#000" stroke-width="2.2" stroke-linecap="round" opacity=".35"/></svg>Driftless</a><span class="slash">/</span><span class="proj">acme-shop</span><span class="badge pro" id="plan">Pro</span>
   <span class="sp"></span>
   <label class="toggle on" id="sub"><span class="sw"></span><span id="subtxt">Subscribed to Paylite</span></label>
-  <button class="btn" id="reset">Reset demo</button>
+  <button class="btn" id="lang">한국어</button><button class="btn" id="reset" data-ko="데모 초기화">Reset demo</button>
 </nav>
+<div class="guide">
+  <div class="gq" data-ko="<b>이 서비스가 하는 일</b> — 쇼핑몰은 결제 회사의 API로 결제를 받습니다. 결제 회사가 API를 바꾸면 쇼핑몰 결제 코드가 고장 납니다. Driftless는 그 변경을 알아채고, 쇼핑몰 코드를 새 API에 맞게 고친 다음, 테스트가 통과하면 &quot;이렇게 고칠까요?&quot;(PR)를 올립니다. 쇼핑몰 개발자는 확인만 누르면 됩니다."><b>What this does</b> — A shop takes payments through a payment company's API. When that company changes its API, the shop's checkout breaks. Driftless notices the change, rewrites the shop's code for the new API, and if the tests pass, proposes the fix as a PR. The shop's developer just approves it.</div>
+  <div class="gs">
+    <div><span>1</span><p data-ko="<b>왼쪽: 결제 회사가 됩니다.</b> 변경 버튼을 1~3개 누르고 <b>발행</b>"><b>Left: be the payment company.</b> Click 1–3 changes, then <b>Publish</b></p></div>
+    <div><span>2</span><p data-ko="<b>가운데: Driftless가 일합니다.</b> 감지 → 영향 찾기 → 수정 → 테스트"><b>Middle: Driftless works.</b> detect → find impact → fix → test</p></div>
+    <div><span>3</span><p data-ko="<b>오른쪽: 쇼핑몰에 수정 제안 도착.</b> 빨강→초록 확인 후 <b>PR 병합</b>"><b>Right: the fix arrives at the shop.</b> Check red→green, then <b>Merge</b></p></div>
+  </div>
+</div>
 <main>
   <!-- provider -->
   <div class="col">
-    <div class="h"><b>Paylite</b><span class="badge" id="ver">v1</span><span class="badge">third-party API</span></div>
-    <p class="cap">You are the API provider here. Change the contract and publish. Driftless is notified by webhook.</p>
-    <div class="card"><div class="lbl">Live contract</div><div id="eps"></div></div>
-    <div class="card"><div class="lbl">Ship a change</div>
+    <div class="h"><b data-ko="① 결제 회사 Paylite">① Paylite (payment API)</b><span class="badge" id="ver">v1</span><span class="badge" data-ko="외부 API">third-party API</span></div>
+    <p class="cap" data-ko="여기서는 내가 API 회사다. 명세를 바꾸고 발행하면 Driftless가 웹훅으로 알림을 받는다.">You are the API provider here. Change the contract and publish. Driftless is notified by webhook.</p>
+    <div class="card"><div class="lbl" data-ko="현재 명세">Live contract</div><div id="eps"></div></div>
+    <div class="card"><div class="lbl" data-ko="변경 배포하기">Ship a change</div>
       <div class="chg" id="chg"></div>
       <ol class="pend" id="pend"></ol>
-      <div class="row"><button class="btn w" id="pub" disabled>Publish</button><button class="btn" id="discard" disabled>Discard</button><span class="sp"></span><button class="btn" id="raw">Edit JSON</button></div>
-      <div id="rawbox" style="display:none;margin-top:10px"><textarea id="json" spellcheck="false"></textarea><div class="row"><button class="btn" id="applyjson">Use this JSON as draft</button><span class="empty" id="jsonerr"></span></div></div>
+      <div class="row"><button class="btn w" id="pub" disabled>Publish</button><button class="btn" id="discard" disabled data-ko="취소">Discard</button><span class="sp"></span><button class="btn" id="raw" data-ko="JSON 직접 수정">Edit JSON</button></div>
+      <div id="rawbox" style="display:none;margin-top:10px"><textarea id="json" spellcheck="false"></textarea><div class="row"><button class="btn" id="applyjson" data-ko="이 JSON을 초안으로">Use this JSON as draft</button><span class="empty" id="jsonerr"></span></div></div>
     </div>
   </div>
   <!-- pipeline -->
   <div class="col">
-    <div class="h"><b>Pipeline</b><span id="busy"></span></div>
-    <p class="cap">Every step Driftless takes, live. Gates stop the run when a fix can't be proven.</p>
+    <div class="h"><b data-ko="② Driftless 자동 수리 과정">② Driftless at work</b><span id="busy"></span></div>
+    <p class="cap" data-ko="Driftless가 하는 모든 단계를 실시간으로 보여 준다. 수정을 증명할 수 없으면 중간에서 멈춘다.">Every step Driftless takes, live. Gates stop the run when a fix can't be proven.</p>
     <div class="tl" id="tl"></div>
   </div>
   <!-- customer repo -->
   <div class="col">
-    <div class="h"><b>acme-shop</b><span class="badge" id="mainv">main · Paylite v1</span></div>
-    <p class="cap">Customer repository. Driftless can read it and open PRs. Only you can merge.</p>
+    <div class="h"><b data-ko="③ 쇼핑몰 acme-shop의 코드">③ acme-shop (shop code)</b><span class="badge" id="mainv">main · Paylite v1</span></div>
+    <p class="cap" data-ko="고객 저장소다. Driftless는 읽고 PR을 열 수만 있다. 병합은 나만 할 수 있다.">Customer repository. Driftless can read it and open PRs. Only you can merge.</p>
     <div id="prs"></div>
     <div id="issues"></div>
     <div class="card"><div class="lbl">main / shop_client.py</div><pre class="code" id="code"></pre></div>
@@ -104,22 +116,24 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const COLOR={hook:"#52a8ff",diff:"#ededed",scan:"#a78bfa",test:"#f5a524",patch:"#52a8ff",pr:"#3ecf8e",merge:"#a78bfa",issue:"#f5a524",warn:"#f5a524",error:"#ff6166",info:"#6b6b6b"};
 let st=null,draft=null,pend=[],seen=-1,lastSig="";
+let L="en";try{L=localStorage.getItem("dl-lang")||((navigator.language||"").startsWith("ko")?"ko":"en")}catch(_){}
+const t=(en,ko)=>L==="ko"?ko:en;
 const clone=o=>JSON.parse(JSON.stringify(o));
 const keyOf=(obj,canon)=>Object.keys(obj||{}).find(k=>obj[k].canon===canon);
 
 const CHANGES=[
- {id:"path",label:s=>{const p=s.endpoints.create_charge.path;const n=(+(p.match(/\/v(\d+)\//)||[0,1])[1])+1;return `Move endpoints to /v${n}/payments`},tag:"path",
+ {id:"path",label:s=>{const p=s.endpoints.create_charge.path;const n=(+(p.match(/\/v(\d+)\//)||[0,1])[1])+1;return t(`Move endpoints to /v${n}/payments`,`엔드포인트를 /v${n}/payments로 이동`)},tag:"path",
   ok:s=>true,apply:s=>{for(const e of Object.values(s.endpoints)){const n=(+(e.path.match(/\/v(\d+)\//)||[0,1])[1])+1;e.path=e.path.replace(/\/v\d+\/(charges|payments)/,`/v${n}/payments`)}},desc:s=>"Endpoints move to "+s.endpoints.create_charge.path.replace(/\/v\d+/,"/v"+((+(s.endpoints.create_charge.path.match(/\/v(\d+)\//)||[0,1])[1])))},
- {id:"state",label:()=>"Rename response field status → state",tag:"field",
+ {id:"state",label:()=>t("Rename response field status → state","응답 필드 이름 변경 status → state"),tag:"field",
   ok:s=>Object.values(s.endpoints).some(e=>keyOf(e.response,"status")==="status"),
   apply:s=>{for(const e of Object.values(s.endpoints)){const k=keyOf(e.response,"status");if(k==="status"){e.response.state=e.response.status;delete e.response.status}}}},
- {id:"cur",label:()=>"Rename request field currency → currency_code",tag:"field",
+ {id:"cur",label:()=>t("Rename request field currency → currency_code","요청 필드 이름 변경 currency → currency_code"),tag:"field",
   ok:s=>keyOf(s.endpoints.create_charge?.request,"currency")==="currency",
   apply:s=>{const r=s.endpoints.create_charge.request;r.currency_code=r.currency;delete r.currency}},
- {id:"idem",label:()=>"Require idempotency_key on create",tag:"param",
+ {id:"idem",label:()=>t("Require idempotency_key on create","결제 생성에 idempotency_key 필수로"),tag:"param",
   ok:s=>!keyOf(s.endpoints.create_charge?.request,"idem"),
   apply:s=>{s.endpoints.create_charge.request.idempotency_key={type:"str",required:true,canon:"idem","x-migration-default":"str(uuid.uuid4())"}}},
- {id:"rm",label:()=>"Remove status from GET charge",tag:"no safe fix",
+ {id:"rm",label:()=>t("Remove status from GET charge","GET 응답에서 status 삭제"),tag:"no safe fix",
   ok:s=>!!keyOf(s.endpoints.get_charge?.response,"status"),
   apply:s=>{const r=s.endpoints.get_charge.response;delete r[keyOf(r,"status")]}}];
 
@@ -127,35 +141,35 @@ async function api(p,b){const r=await fetch(p,b?{method:"POST",headers:{"Content
 
 function drawProvider(){
   const s=draft||st.spec;
-  $("#ver").textContent="v"+st.spec.version+(draft?" · draft":"");
+  $("#ver").textContent="v"+st.spec.version+(draft?t(" · draft"," · 초안"):"");
   $("#eps").innerHTML=Object.entries(s.endpoints).map(([n,e])=>`<div class="ep"><span class="m ${e.method}">${e.method}</span><span class="path">${esc(e.path)}</span>
    <div class="fields">${Object.keys(e.request||{}).length?`req { <span>${Object.entries(e.request).map(([k,v])=>k+(v.required?"*":"")).join(", ")}</span> }<br>`:""}res { <span>${Object.keys(e.response).join(", ")}</span> }</div></div>`).join("");
-  $("#chg").innerHTML=CHANGES.map((c,i)=>`<button class="btn" data-i="${i}" ${c.ok(s)&&!st.busy?"":"disabled"}>${esc(c.label(s))}<small>${c.tag}</small></button>`).join("");
+  $("#chg").innerHTML=CHANGES.map((c,i)=>`<button class="btn" data-i="${i}" ${c.ok(s)&&!st.busy?"":"disabled"}>${esc(c.label(s))}<small>${t(c.tag,{path:"주소",field:"필드",param:"파라미터","no safe fix":"자동 수정 불가"}[c.tag])}</small></button>`).join("");
   document.querySelectorAll("#chg button").forEach(b=>b.onclick=()=>{const c=CHANGES[+b.dataset.i];if(!draft)draft=clone(st.spec);const before=c.label(draft);c.apply(draft);pend.push(before);drawProvider()});
   $("#pend").innerHTML=pend.map(p=>`<li>${esc(p)}</li>`).join("");
   $("#pub").disabled=!draft||st.busy;$("#discard").disabled=!draft;
-  $("#pub").textContent=draft?`Publish v${st.spec.version+1}`:"Publish";
+  $("#pub").textContent=draft?t(`Publish v${st.spec.version+1}`,`v${st.spec.version+1} 발행`):t("Publish","발행");
 }
 function drawTimeline(){
   const ev=st.events;
   if(ev.length===seen)return;seen=ev.length;
-  $("#tl").innerHTML=ev.slice().reverse().map(e=>`<div class="e" style="--c:${COLOR[e.kind]||"#555"}"><span class="t">${e.t}</span><span class="k">${e.kind}</span><div class="msg">${esc(e.msg)}</div>${e.items&&e.items.length?`<ul>${e.items.map(i=>`<li>${esc(i)}</li>`).join("")}</ul>`:""}</div>`).join("")||`<p class="empty">Waiting for a provider change…</p>`;
+  $("#tl").innerHTML=ev.slice().reverse().map(e=>`<div class="e" style="--c:${COLOR[e.kind]||"#555"}"><span class="t">${e.t}</span><span class="k">${e.kind}</span><div class="msg">${esc(trMsg(e.msg))}</div>${e.items&&e.items.length?`<ul>${e.items.map(i=>`<li>${esc(trItem(i))}</li>`).join("")}</ul>`:""}</div>`).join("")||`<p class="empty">${t("Waiting for a provider change…","API 회사의 변경을 기다리는 중…")}</p>`;
 }
 function diffHtml(d){return d.split("\n").map(l=>{const c=l.startsWith("+++")||l.startsWith("---")?"":l.startsWith("@@")?"hunk":l.startsWith("+")?"add":l.startsWith("-")?"del":"";return `<div class="${c}">${esc(l)||" "}</div>`}).join("")}
 function drawRepo(){
-  $("#mainv").textContent="main · Paylite v"+st.main_version;
+  $("#mainv").textContent=t("main · Paylite v","main · Paylite v")+st.main_version+t(""," 기준");
   $("#code").textContent=st.code;
-  $("#prs").innerHTML=st.prs.slice().reverse().map(p=>`<div class="card"><div class="prh"><span class="st ${p.state}">${p.state}</span><b>#${p.id} ${esc(p.title)}</b></div>
-   <div class="checks"><span>before <b class="red">${esc(p.before)}</b></span><span>after <b class="green">${esc(p.after)}</b></span><span>${esc(p.branch)}</span></div>
-   <ul class="chl">${p.changes.map(c=>`<li>${esc(c)}</li>`).join("")}</ul>
-   <details ${p.state==="open"?"open":""}><summary>Files changed · shop_client.py</summary><pre class="diff">${diffHtml(p.diff)}</pre></details>
-   ${p.state==="open"?`<div class="row"><button class="btn w" onclick="merge(${p.id})">Merge pull request</button></div>`:""}</div>`).join("");
-  $("#issues").innerHTML=st.issues.slice().reverse().map(i=>`<div class="card"><div class="prh"><span class="st issue">issue</span><b>#${i.id} ${esc(i.title)}</b></div><ul class="chl">${i.items.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`).join("");
+  $("#prs").innerHTML=st.prs.slice().reverse().map(p=>`<div class="card"><div class="prh"><span class="st ${p.state}">${t(p.state,{open:"열림",merged:"병합됨",superseded:"대체됨"}[p.state])}</span><b>#${p.id} ${esc(trItem(p.title))}</b></div>
+   <div class="checks"><span>${t("before","수정 전")} <b class="red">${esc(p.before)}</b></span><span>${t("after","수정 후")} <b class="green">${esc(p.after)}</b></span><span>${esc(p.branch)}</span></div>
+   <ul class="chl">${p.changes.map(c=>`<li>${esc(trItem(c))}</li>`).join("")}</ul>
+   <details ${p.state==="open"?"open":""}><summary>${t("Files changed","바뀐 파일")} · shop_client.py</summary><pre class="diff">${diffHtml(p.diff)}</pre></details>
+   ${p.state==="open"?`<div class="row"><button class="btn w" onclick="merge(${p.id})">${t("Merge pull request","PR 병합")}</button></div>`:""}</div>`).join("");
+  $("#issues").innerHTML=st.issues.slice().reverse().map(i=>`<div class="card"><div class="prh"><span class="st issue">${t("issue","이슈")}</span><b>#${i.id} ${esc(trItem(i.title))}</b></div><ul class="chl">${i.items.map(x=>`<li>${esc(trItem(x))}</li>`).join("")}</ul></div>`).join("");
 }
 async function poll(){
-  try{st=await api("/api/state")}catch(e){$("#busy").innerHTML=`<span class="badge" style="color:var(--bad)">server offline</span>`;return}
-  $("#busy").innerHTML=st.busy?`<span class="badge"><span class="spin"></span>running</span>`:"";
-  const t=$("#sub");t.classList.toggle("on",st.subscribed);$("#subtxt").textContent=st.subscribed?"Subscribed to Paylite":"Subscription paused";$("#plan").textContent=st.subscribed?"Pro":"Free";
+  try{st=await api("/api/state")}catch(e){$("#busy").innerHTML=`<span class="badge" style="color:var(--bad)">${t("server offline","서버 꺼짐")}</span>`;return}
+  $("#busy").innerHTML=st.busy?`<span class="badge"><span class="spin"></span>${t("running","실행 중")}</span>`:"";
+  const tg=$("#sub");tg.classList.toggle("on",st.subscribed);$("#subtxt").textContent=st.subscribed?t("Subscribed to Paylite","Paylite 구독 중"):t("Subscription paused","구독 일시 중지");$("#plan").textContent=st.subscribed?"Pro":"Free";
   const sig=JSON.stringify([st.spec.version,st.busy,st.prs.map(p=>p.state),st.issues.length,st.main_version]);
   if(sig!==lastSig){lastSig=sig;drawProvider();drawRepo()}
   drawTimeline();
@@ -165,9 +179,39 @@ function alertBox(m){$("#jsonerr").textContent=m}
 $("#pub").onclick=async()=>{try{await api("/api/publish",{spec:draft});draft=null;pend=[];lastSig="";await poll()}catch(e){alertBox(e.message)}};
 $("#discard").onclick=()=>{draft=null;pend=[];drawProvider()};
 $("#raw").onclick=()=>{const b=$("#rawbox");const on=b.style.display==="none";b.style.display=on?"block":"none";if(on)$("#json").value=JSON.stringify(draft||st.spec,null,2)};
-$("#applyjson").onclick=()=>{try{const j=JSON.parse($("#json").value);if(!j.endpoints)throw new Error("needs endpoints");draft=j;pend.push("Edited JSON");$("#jsonerr").textContent="";drawProvider()}catch(e){$("#jsonerr").textContent="Invalid: "+e.message}};
+$("#applyjson").onclick=()=>{try{const j=JSON.parse($("#json").value);if(!j.endpoints)throw new Error("needs endpoints");draft=j;pend.push(t("Edited JSON","JSON 직접 수정"));$("#jsonerr").textContent="";drawProvider()}catch(e){$("#jsonerr").textContent=t("Invalid: ","잘못된 JSON: ")+e.message}};
 $("#sub").onclick=async()=>{await api("/api/subscribe",{on:!st.subscribed});lastSig="";await poll()};
 $("#reset").onclick=async()=>{try{await api("/api/reset",{});draft=null;pend=[];seen=-1;lastSig="";await poll()}catch(e){alertBox(e.message)}};
+const MSG=[
+[/^acme-shop connected \(read-only \+ PR scope\)\. Subscribed to Paylite API updates\.$/,"acme-shop 연결됨 (읽기 + PR 권한). Paylite API 업데이트를 구독 중."],
+[/^Webhook from Paylite: v(\d+) published \(acme-shop main is written for v(\d+)\)$/,"Paylite 웹훅 수신: v$1 발행 (acme-shop main은 v$2 기준)"],
+[/^Spec diff: no contract changes\. Nothing to do\.$/,"스펙 비교: 계약 변경 없음. 할 일 없음."],
+[/^Spec diff: (\d+) change\(s\)$/,"스펙 비교: 변경 $1건"],
+[/^acme-shop is not subscribed\. Change detected, no action taken\.$/,"acme-shop은 구독 중이 아님. 변경은 감지했지만 아무것도 하지 않음."],
+[/^Only non-breaking changes\. No PR needed\.$/,"깨지지 않는 변경뿐. PR이 필요 없음."],
+[/^Scanned acme-shop: no affected call sites\. Nothing to do\.$/,"acme-shop 탐색: 영향받는 호출 없음. 할 일 없음."],
+[/^Scanned acme-shop: (\d+) affected call site\(s\)$/,"acme-shop 탐색: 영향받는 호출 $1곳"],
+[/^Tests on main against live Paylite: (passing|FAILING)  \((.*)\)$/,(m,a,b)=>`main 코드로 현재 Paylite 테스트: ${a==="passing"?"통과":"실패"} (${b})`],
+[/^Cannot verify a safe fix\. Opened issue #(\d+) instead of a PR\.$/,"안전한 수정을 검증할 수 없음. PR 대신 이슈 #$1을 열었다."],
+[/^No code change required\.$/,"코드 변경이 필요 없음."],
+[/^Range guard: patch touched lines outside the affected functions\. Rejected\.$/,"범위 검사: 영향받은 함수 밖을 건드림. 거부."],
+[/^Scoped patch generated: (\d+) change\(s\), only inside affected functions\. Range guard passed\.$/,"범위 안 수정 생성: $1건, 영향받은 함수 안에서만. 범위 검사 통과."],
+[/^Tests with patch against Paylite v(\d+): (passing|FAILING)  \((.*)\)$/,(m,v,a,b)=>`수정본으로 Paylite v${v} 테스트: ${a==="passing"?"통과":"실패"} (${b})`],
+[/^Patch did not pass tests\. No PR\. Opened issue #(\d+)\.$/,"수정본이 테스트를 통과하지 못함. PR 없음. 이슈 #$1을 열었다."],
+[/^Opened PR #(\d+): Adapt to Paylite API v(\d+) — tests red → green\. Waiting for your review\.$/,"PR #$1 열림: Paylite API v$2에 맞게 수정 — 테스트 빨강 → 초록. 검토를 기다리는 중."],
+[/^You merged PR #(\d+)\. acme-shop main now speaks Paylite v(\d+)\.$/,"PR #$1을 병합했다. 이제 acme-shop main은 Paylite v$2 기준이다."],
+[/^Subscription activated \(Pro\)\.$/,"구독 활성화 (Pro)."],[/^Subscription paused\.$/,"구독 일시 중지."],
+[/^pipeline crashed: (.*)$/,"파이프라인 오류: $1"],[/^webhook delivery failed: (.*)$/,"웹훅 전달 실패: $1"]];
+function trMsg(m){if(L!=="ko")return m;for(const[r,x]of MSG){if(r.test(m))return m.replace(r,x)}return m}
+const ITEM=[[/^Paylite said: /,"Paylite 응답: "],[/ · breaking$/," · 깨지는 변경"],[/new required request field/,"새 필수 요청 필드"],[/new optional (request|response) field/,"새 선택 필드"],[/request field/,"요청 필드"],[/response field/,"응답 필드"],[/endpoint removed/,"엔드포인트 삭제"],[/'(\w+)' removed/,"'$1' 삭제"],[/ uses /," → 사용: "],
+[/^Adapt to Paylite API v(\d+)$/,"Paylite API v$1에 맞게 수정"],[/^Paylite v(\d+) needs a human decision$/,"Paylite v$1: 사람의 결정이 필요함"],[/^Paylite v(\d+): automatic patch failed verification$/,"Paylite v$1: 자동 수정이 검증에 실패함"],
+[/: code reads '(\w+)', which no longer exists; there is no safe automatic replacement/,": 코드가 '$1'을 읽는데 더 이상 없음. 안전한 자동 대체가 없음"],[/: vendor gave no migration default; a human must choose a value/,": 제공자가 기본값을 주지 않음. 사람이 값을 정해야 함"],[/: endpoint removed; needs a product decision/,": 엔드포인트 삭제. 제품 결정이 필요함"]];
+function trItem(s){if(L!=="ko")return s;for(const[r,x]of ITEM)s=s.replace(r,x);return s}
+const KO=[...document.querySelectorAll("[data-ko]")];KO.forEach(e=>e.dataset.en=e.innerHTML);
+function setLang(l){L=l;KO.forEach(e=>e.innerHTML=l==="ko"?e.dataset.ko:e.dataset.en);document.documentElement.lang=l;$("#lang").textContent=l==="ko"?"English":"한국어";try{localStorage.setItem("dl-lang",l)}catch(_){}seen=-1;lastSig="";if(st){drawProvider();drawRepo();drawTimeline();poll()}}
+{const q=new URLSearchParams(location.search).get("lang");if(q==="ko"||q==="en")L=q;}
+$("#lang").onclick=()=>setLang(L==="ko"?"en":"ko");
+setLang(L);
 poll();setInterval(poll,800);
 </script>
 </body>
