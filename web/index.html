@@ -82,7 +82,7 @@ footer{border-top:1px solid var(--line);padding:30px 0;color:var(--mut);font-siz
 <body>
 <nav><div class="wrap">
   <a class="logo" href="/"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="1" y="1" width="22" height="22" rx="7" fill="#12a36a"/><path d="M5.5 14.5c2-3 4-3 6 0s4 3 6 0" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><path d="M5.5 9.5h13" stroke="#fff" stroke-width="2.2" stroke-linecap="round" opacity=".45"/></svg>Driftless</a>
-  <div class="links"><a href="#how" data-ko="작동 방식">How it works</a><a href="#under" data-ko="동작 원리">Under the hood</a><a href="#trust" data-ko="보안">Security</a><a href="#pricing" data-ko="가격">Pricing</a></div>
+  <div class="links"><a href="#how" data-ko="작동 방식">How it works</a><a href="#ais" data-ko="AI 구조">Two AIs</a><a href="#under" data-ko="동작 원리">Under the hood</a><a href="#trust" data-ko="보안">Security</a><a href="#pricing" data-ko="가격">Pricing</a></div>
   <span class="sp"></span><button class="btn lang" id="lang">한국어</button><a class="btn k" href="/app.html" data-ko="데모 열기">Open demo</a>
 </div></nav>
 
@@ -91,12 +91,12 @@ footer{border-top:1px solid var(--line);padding:30px 0;color:var(--mut);font-siz
   <div>
     <div class="eyebrow">● <span>YC RFS · Self-Maintaining APIs</span></div>
     <h1 data-ko="외부 API가 바뀌어도<br>내 코드는 <em>제자리에</em>.">APIs drift.<br>Your code <em>doesn't</em>.</h1>
-    <p class="lead" data-ko="쓰는 API와 지켜볼 페이지를 등록하세요. 바뀌면 Slack·이메일로 알려 주고, API 변화는 Claude가 내 코드를 고쳐 테스트로 검증한 뒤 GitHub PR로 보냅니다.">Register the APIs you call and the pages you care about. When they change, you get Slack and email alerts — and API changes arrive as a GitHub PR that Claude wrote and your tests verified.</p>
+    <p class="lead" data-ko="쓰는 API와 지켜볼 페이지를 등록하세요. 바뀌면 <b>판단 AI(Jev)</b>가 의미 있는 변화인지 가리고, <b>생성 AI(Claude)</b>가 내 코드를 고치고, <b>내 테스트</b>가 검증한 뒤 GitHub PR과 Slack·이메일로 보냅니다.">Register the APIs you call and the pages you care about. When they change, a <b>decision model (Jev)</b> judges whether it matters, a <b>generative model (Claude)</b> writes the fix, and <b>your tests</b> verify it — then it arrives as a GitHub PR plus Slack and email.</p>
     <div class="cta"><a class="btn k" href="/app.html" data-ko="라이브 데모 해보기 →">Try the live demo →</a><a class="btn" href="#under" data-ko="동작 원리">How it works</a></div>
-    <div class="trust"><span data-ko="테스트 통과한 PR만">Only test-verified PRs</span><span data-ko="병합은 사람이">Humans merge</span><span data-ko="AI 에이전트용 MCP">MCP for AI agents</span></div>
+    <div class="trust"><span data-ko="테스트 통과한 PR만">Only test-verified PRs</span><span data-ko="병합은 사람이">Humans merge</span><span data-ko="판단 AI ≠ 작성 AI">Judge ≠ writer</span><span data-ko="AI 에이전트용 MCP">MCP for AI agents</span></div>
   </div>
   <div class="stage" aria-hidden="true">
-    <div class="c c1"><div class="h"><span class="pill p-amber" data-ko="변경 감지">Change detected</span><span>Paylite API · v1 → v2</span></div>
+    <div class="c c1"><div class="h"><span class="pill p-amber" data-ko="변경 감지">Change detected</span><span class="pill p-blue">Jev · breaking 0.97</span></div>
       <b data-ko="깨지는 변경 3건">3 breaking changes</b>
       <ul><li>POST /v1/charges → /v2/payments</li><li>status → state</li><li>+ idempotency_key (required)</li></ul></div>
     <div class="c c2"><div class="h"><span class="pill p-ok" data-ko="PR 열림">Open</span><span class="pill p-blue" data-ko="✨ Claude가 작성">✨ Written by Claude</span><span>#1 · acme-shop</span></div>
@@ -114,10 +114,22 @@ footer{border-top:1px solid var(--line);padding:30px 0;color:var(--mut);font-siz
   <p class="sub" data-ko="변경 공지는 아무도 안 읽습니다. Driftless는 명세와 페이지 자체를 읽고, 내 코드가 영향받을 때만 움직입니다.">Nobody reads changelogs. Driftless reads the spec and the page itself, and only moves when your code is affected.</p>
   <div class="four">
     <div class="f"><div class="n" style="background:var(--bluebg);color:var(--blue)">1</div><b data-ko="API 명세 또는 웹페이지">API spec or web page</b><p data-ko="OpenAPI 명세는 엔드포인트 단위로, 웹페이지는 크롤링해서 글 단위로 비교합니다.">OpenAPI specs are compared by endpoint; web pages are crawled and compared by text.</p></div>
-    <div class="f"><div class="n" style="background:var(--amberbg);color:var(--amber)">2</div><b data-ko="주기적으로 확인">Checked on a schedule</b><p data-ko="한 번에 하나씩 정해진 간격으로. 첫 확인은 기준선, 이후엔 달라진 것만. 빈 응답은 기준선을 덮지 않습니다.">One at a time, on an interval. First check is the baseline; after that, only what changed. Empty responses never overwrite it.</p></div>
+    <div class="f"><div class="n" style="background:var(--amberbg);color:var(--amber)">2</div><b data-ko="감지하고 Jev가 판단">Detect, then Jev judges</b><p data-ko="정해진 간격으로 확인하고, 달라진 줄을 판단 AI Jev가 가립니다. 잡음은 알림 없이 버리고, 깨지는 변경만 다음 단계로 넘깁니다.">Checked on a schedule; changed lines go to Jev, a decision model. Noise is dropped silently; only breaking changes move on.</p></div>
     <div class="f"><div class="n" style="background:var(--okbg);color:var(--ok)">3</div><b data-ko="AI가 코드를 고침">AI fixes the code</b><p data-ko="Claude가 영향받은 코드를 고치고 PR을 씁니다. 범위 검사와 내 테스트를 통과해야만 PR이 됩니다.">Claude patches the affected code and writes the PR. It must pass the range guard and your tests.</p></div>
     <div class="f"><div class="n" style="background:#f0ecff;color:#6a4fd6">4</div><b>Slack · Email · PR</b><p data-ko="바뀐 내용은 Slack과 이메일로, 코드 수정은 GitHub PR로. 병합은 사람이 합니다.">Changes go to Slack and email; fixes arrive as GitHub PRs. A human merges.</p></div>
   </div>
+</div></section>
+
+<section id="ais"><div class="wrap">
+  <div class="kick" data-ko="AI 기반 모니터링">AI-powered monitoring</div>
+  <h2 data-ko="두 종류의 AI를 분리했습니다">Two kinds of AI, kept apart.</h2>
+  <p class="sub" data-ko="고치는 AI가 자기 수정을 채점하면 안 됩니다. 판단은 비생성형 모델이, 작성은 생성형 모델이, 최종 판정은 테스트가 합니다.">The AI that writes the fix should never grade its own work. A non-generative model judges, a generative model writes, and your tests have the final say.</p>
+  <div class="four" style="grid-template-columns:repeat(3,1fr)">
+    <div class="f"><div class="n" style="background:var(--bluebg);color:var(--blue)">J</div><b data-ko="Jev · 판단 AI">Jev · the judge</b><p data-ko="TypeSafe의 <b>비생성형 판단 모델</b>. 글을 만들지 않고, 질문마다 <b>확률이 붙은 정해진 답</b>만 냅니다. &quot;의미 있는 변화인가 0.85 · 깨지는 변경인가 0.97 · 종류: breaking&quot;.">A <b>non-generative decision model</b> by TypeSafe. It never writes text; it returns <b>typed answers with probabilities</b>: "meaningful 0.85 · breaking 0.97 · kind: breaking".</p></div>
+    <div class="f"><div class="n" style="background:var(--okbg);color:var(--ok)">C</div><b data-ko="Claude · 작성 AI">Claude · the writer</b><p data-ko="<b>생성형 모델</b>. Jev가 깨지는 변경이라고 판단한 경우에만, 영향받은 코드의 수정본과 PR 설명을 씁니다.">A <b>generative model</b>. Only when Jev says it's breaking, Claude writes the patch for the affected code and the PR description.</p></div>
+    <div class="f"><div class="n" style="background:var(--amberbg);color:var(--amber)">T</div><b data-ko="내 테스트 · 최종 판정">Your tests · ground truth</b><p data-ko="새 API로 수정 전은 실패, 수정 후는 통과해야 PR이 됩니다. 어느 AI의 말도 테스트를 이기지 못합니다.">Before the patch the tests must fail against the new API, after it they must pass. No AI overrides the tests.</p></div>
+  </div>
+  <p class="note" data-ko="실측: 방문자 수처럼 매번 바뀌는 줄은 Jev가 noise(의미 있음 0.04)로 판정해 알림을 막았고, 엔드포인트 이동 공지는 breaking(0.97)으로 판정해 알림을 보냈습니다.">Measured in this demo: a volatile "1,204 developers online" line was judged noise (meaningful 0.04) and suppressed; an endpoint-move notice was judged breaking (0.97) and alerted.</p>
 </div></section>
 
 <section id="under"><div class="wrap">
@@ -127,6 +139,7 @@ footer{border-top:1px solid var(--line);padding:30px 0;color:var(--mut);font-siz
   <div class="flow">
     <div class="fb"><span class="n">Paylite</span><b data-ko="스펙 v2 발행">Spec v2 published</b></div><i>→</i>
     <div class="fb"><span class="n">diff</span><b data-ko="깨지는 변경 3건">3 breaking changes</b></div><i>→</i>
+    <div class="fb"><span class="n">Jev</span><b data-ko="판단: breaking 0.97">judge: breaking 0.97</b></div><i>→</i>
     <div class="fb"><span class="n">scan</span><b data-ko="영향받는 함수 2개">2 functions affected</b></div><i>→</i>
     <div class="fb"><span class="n">Claude</span><b data-ko="수정 + PR 작성">patch + PR text</b></div><i>→</i>
     <div class="fb"><span class="n">verify</span><b data-ko="빨강 → 초록">red → green</b></div><i>→</i>

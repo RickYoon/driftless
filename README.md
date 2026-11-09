@@ -9,6 +9,10 @@ YC Request for Startups: **Self-Maintaining APIs** · built at c0mpiled-17 Seoul
 
 ---
 
+## Two kinds of AI, kept apart
+
+The AI that writes a fix should never grade its own work. **Jev** (non-generative decision model, via OpenRouter) judges whether a change matters and whether it breaks integrations. **Claude** (generative) writes the patch and PR only after that. **Your tests** decide whether the PR exists. Same principle we use in production at SemiHub, where Jev checks that published conference dates actually appear in the official source.
+
 ## Why this matters
 
 Third-party APIs change all the time: endpoints move, fields get renamed, new parameters become required. Providers announce it in a changelog nobody reads, and customers find out when production breaks. Agentic coding tools proved teams will let a tool touch their repo **if it is careful**. The missing piece is the layer that notices the change, applies it, and *proves* the fix before a human sees it.
@@ -18,7 +22,9 @@ Third-party APIs change all the time: endpoints move, fields get renamed, new pa
 ```mermaid
 flowchart LR
   A["Source<br/>API spec · web page"] --> B["Detect<br/>webhook or schedule"]
-  B --> C{"Breaking change<br/>affects your code?"}
+  B --> J["Jev (decision model)<br/>meaningful? breaking?"]
+  J -->|noise| X["Dropped, no alert"]
+  J --> C{"Breaking change<br/>affects your code?"}
   C -->|no| N["Alert only<br/>Slack · email"]
   C -->|yes| D["Scan<br/>AST → affected functions"]
   D --> E["Claude<br/>patch + PR text"]
@@ -33,6 +39,7 @@ flowchart LR
 
 - [x] **Sources**: API specs (diffed by endpoint and field identity) and web pages (crawled, diffed by line)
 - [x] **Detection**: provider webhook, or scheduled checks run one at a time; the first check is the baseline, empty responses never overwrite it
+- [x] **AI judge (Jev)**: every detected change is scored by Jev, TypeSafe's non-generative decision model (typed answers with probabilities, no generated text): *meaningful?*, *breaking?*, *kind*. Noise is suppressed. Measured: a volatile counter line → noise (meaningful 0.04, no alert); an endpoint-move notice → breaking (0.97, alert)
 - [x] **AI fix**: Claude (via the `claude` CLI) writes the patch and the PR description; rule-based codemod fallback when AI is unavailable
 - [x] **Verification**: range guard (edits only inside affected functions) + tests run against the new API before and after the patch
 - [x] **Outputs**: PR (local repo branch, or a real GitHub repo when configured), Slack webhook, SMTP email, issue when no safe fix exists
@@ -57,7 +64,7 @@ git clone https://github.com/RickYoon/driftless && cd driftless
 open http://127.0.0.1:8790     # landing  ·  /app.html demo  ·  /console.html internals
 ```
 
-Python 3.10+ and git. Standard library only. The `claude` CLI is optional (AI-written PRs; otherwise rule-based).
+Python 3.10+ and git. Standard library only. Optional: the `claude` CLI (AI-written PRs; otherwise rule-based) and an OpenRouter key in `OPENROUTER_API_KEY` or `~/.config/openrouter/key` (Jev verdicts; otherwise every change alerts).
 
 ## Connect Claude (MCP)
 
@@ -113,4 +120,4 @@ Python standard library (`http.server`, `ast`, `difflib`, `smtplib`, `unittest`)
 
 ## The pitch
 
-**Every product runs on someone else's API. Driftless makes sure it keeps running when that API changes.**
+**Every product runs on someone else's API. Driftless keeps it running when that API changes: one AI judges, another writes, your tests decide.**

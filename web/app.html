@@ -95,7 +95,7 @@ pre.diff div{padding:0 14px}.ad{background:rgba(62,207,142,.12);color:#0b6b46}.d
 
   <div class="card" id="s2">
     <div class="st"><span class="num">2</span><b data-ko="변화 감지: 주기적으로 확인">Detect changes on a schedule</b></div>
-    <p class="p" data-ko="첫 확인은 기준선으로 저장하고, 그다음부터 달라진 줄만 보고합니다. 빈 응답으로 기준선을 덮어쓰지 않습니다.">The first check becomes the baseline. After that, only changed lines are reported. An empty response never overwrites the baseline.</p>
+    <p class="p" data-ko="첫 확인은 기준선, 이후엔 달라진 줄만 봅니다. 달라진 줄은 <b>판단 AI Jev</b>(비생성형)가 &quot;의미 있는 변화인가 · 깨지는 변경인가&quot;를 확률로 판정하고, 잡음이면 알림을 막습니다.">The first check is the baseline; after that, only changed lines. <b>Jev</b>, a non-generative decision model, scores each change ("meaningful?", "breaking?") and suppresses noise.</p>
     <ul class="log" id="log"></ul>
   </div>
 
@@ -134,7 +134,7 @@ let st=null,sig="",typed={},cfgFilled=false;
 async function api(p,b){const r=await fetch(p,b?{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)}:undefined);const j=await r.json();if(!r.ok)throw new Error(j.error||r.status);return j}
 function md(s){return esc(s).split("\n").map(l=>{l=l.replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/`([^`]+)`/g,"<code>$1</code>");return /^\s*[-*] /.test(l)?"<li>"+l.replace(/^\s*[-*] /,"")+"</li>":(l.trim()?"<p>"+l+"</p>":"")}).join("").replace(/(<li>.*?<\/li>)+/g,m=>"<ul>"+m+"</ul>")}
 function diffHtml(d){return d.split("\n").map(l=>{const c=l.startsWith("+++")||l.startsWith("---")?"":l.startsWith("@@")?"hk":l.startsWith("+")?"ad":l.startsWith("-")?"de":"";return `<div class="${c}">${esc(l)||" "}</div>`}).join("")}
-const KCOL={source:"var(--amber)",notify:"var(--ok)",pr:"var(--ok)",issue:"var(--amber)",warn:"var(--amber)",error:"var(--bad)",hook:"var(--blue)",ai:"var(--blue)",test:"var(--amber)",diff:"var(--fg)",scan:"var(--purple)",patch:"var(--blue)",merge:"var(--purple)",info:"var(--dim)"};
+const KCOL={jev:"var(--blue)",source:"var(--amber)",notify:"var(--ok)",pr:"var(--ok)",issue:"var(--amber)",warn:"var(--amber)",error:"var(--bad)",hook:"var(--blue)",ai:"var(--blue)",test:"var(--amber)",diff:"var(--fg)",scan:"var(--purple)",patch:"var(--blue)",merge:"var(--purple)",info:"var(--dim)"};
 function statusCls(s){return /changed/.test(s)?"chg":/fail|empty/.test(s)?"bad":/baseline|no change|watching/.test(s)?"ok":""}
 function trStatus(s){if(L!=="ko")return s;return s.replace(/^baseline saved \((\d+) lines\)$/,"기준선 저장 ($1줄)").replace(/^baseline saved \((\d+) operations\)$/,"기준선 저장 (엔드포인트 $1개)").replace(/^no change$/,"변화 없음").replace(/^changed$/,"변화 감지").replace(/^watching$/,"웹훅으로 지켜보는 중").replace(/^new$/,"아직 확인 전").replace(/^fetch failed: /,"가져오기 실패: ").replace(/^empty response, snapshot kept$/,"빈 응답 — 기준선 유지")}
 function render(){

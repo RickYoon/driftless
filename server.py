@@ -556,6 +556,42 @@ def github_pr(branch, title, body):
         return f"failed: {e}"
 
 
+
+# ---------------------------------------------------------------- Jev: AI judge for detected changes (judges only, never writes)
+JEV_MODEL = "typesafe/jev-1.13"
+JEV_QUESTIONS = {
+    "meaningful_change": {"type": "noul", "instructions": "The added/removed lines describe a real change to an API or product behavior, not timestamps, counters, ads, navigation, or cosmetic wording."},
+    "breaking_api_change": {"type": "noul", "instructions": "The change announces a breaking API change for existing integrations: an endpoint moved or removed, a field renamed or removed, or a new required parameter."},
+    "change_kind": {"type": "choice", "instructions": "What kind of change is this?",
+                    "criteria": {"breaking": "Breaks existing API integrations", "feature": "New capability, backward compatible",
+                                 "deprecation": "Announces future removal", "docs_or_cosmetic": "Wording, docs, layout",
+                                 "noise": "Timestamps, counters, ads, or other volatile text"}},
+}
+
+
+def jev_key():
+    k = os.environ.get("OPENROUTER_API_KEY")
+    p = os.path.expanduser("~/.config/openrouter/key")
+    if not k and os.path.exists(p):
+        k = open(p).read().strip()
+    return k
+
+
+def jev_judge(source, lines):
+    k = jev_key()
+    if not k or os.environ.get("DRIFTLESS_JEV") == "0":
+        return None
+    state = {"source": source, "added_lines": [l[2:] for l in lines if l.startswith("+ ")],
+             "removed_lines": [l[2:] for l in lines if l.startswith("- ")]}
+    body = json.dumps({"model": JEV_MODEL, "state": state, "questions": JEV_QUESTIONS}).encode()
+    req = urllib.request.Request("https://openrouter.ai/api/alpha/decisions", data=body, method="POST",
+                                 headers={"Authorization": f"Bearer {k}", "Content-Type": "application/json"})
+    with urllib.request.urlopen(req, timeout=60, context=SSL_CTX) as r:
+        a = json.loads(r.read())["answers"]
+    return {"meaningful": round(a["meaningful_change"]["noul"], 2), "breaking": round(a["breaking_api_change"]["noul"], 2),
+            "kind": a["change_kind"]["choice"], "kind_p": round(a["change_kind"]["confidence"], 2)}
+
+
 def scheduler():
     while True:
         time.sleep(3)
@@ -578,7 +614,19 @@ def run_check(src):
         return
     if ch:
         ev("source", f"[{src['name']}] change detected", items=ch)
-        rec = notify(f"{src['name']} changed", ch, src["url"])
+        verdict = None
+        try:
+            verdict = jev_judge(src["name"], ch)
+        except Exception as e:
+            ev("warn", f"Jev judge unavailable ({str(e)[:80]}); alerting without a verdict.")
+        if verdict:
+            src["verdict"] = verdict
+            ev("jev", f"Jev verdict: {verdict['kind']} ({verdict['kind_p']}) · meaningful {verdict['meaningful']} · breaking {verdict['breaking']}")
+            if verdict["meaningful"] < 0.5:
+                ev("info", "Jev judged this as noise. Alert suppressed.")
+                return
+        tag = f"[{verdict['kind']}] " if verdict else ""
+        rec = notify(f"{tag}{src['name']} changed", ch + ([f"Jev: breaking {verdict['breaking']}, meaningful {verdict['meaningful']}"] if verdict else []), src["url"])
         ev("notify", "Alerts: " + ", ".join(f"{k} {v}" for k, v in rec["channels"].items()))
 
 

@@ -31,7 +31,7 @@ def publish(mutate):
 
 
 def main():
-    srv = subprocess.Popen([sys.executable, "server.py"], cwd=HERE, env={**os.environ, "PORT": str(PORT), "DRIFTLESS_AI": "0"},
+    srv = subprocess.Popen([sys.executable, "server.py"], cwd=HERE, env={**os.environ, "PORT": str(PORT), "DRIFTLESS_AI": "0", "DRIFTLESS_JEV": "0"},
                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     try:
         time.sleep(1.5)
