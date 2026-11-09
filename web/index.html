@@ -5,187 +5,194 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Driftless — APIs drift. Your code doesn't.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#000;--fg:#ededed;--mut:#a1a1a1;--line:#2e2e2e;--card:#0a0a0a;--ok:#3ecf8e;--bad:#ff6166;--blue:#52a8ff}
+:root{--bg:#f7f6f2;--fg:#16150f;--mut:#6b675e;--line:#e4e0d6;--card:#fff;--ok:#12a36a;--okbg:#e3f6ec;--bad:#d9483b;--badbg:#fdebe8;--blue:#2f6fe4;--bluebg:#e8efff;--amber:#c27a12;--amberbg:#fdf2dc;--ink:#16150f}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 Geist,"Apple SD Gothic Neo",-apple-system,sans-serif;-webkit-font-smoothing:antialiased;word-break:keep-all}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 Inter,"Apple SD Gothic Neo",-apple-system,sans-serif;-webkit-font-smoothing:antialiased;word-break:keep-all}
 a{color:inherit;text-decoration:none}
-.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
-nav{position:sticky;top:0;z-index:5;background:rgba(0,0,0,.78);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-nav .wrap{display:flex;align-items:center;gap:22px;height:60px}
-.logo{display:flex;align-items:center;gap:9px;font-weight:700;font-size:17px}
-.logo svg{width:24px;height:24px}
-nav .links{display:flex;gap:20px;color:var(--mut);font-size:14px}nav .links a:hover{color:var(--fg)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+nav{position:sticky;top:0;z-index:5;background:rgba(247,246,242,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;gap:22px;height:64px}
+.logo{display:flex;align-items:center;gap:9px;font:700 18px "Inter Tight",sans-serif;letter-spacing:-.01em}.logo svg{width:26px;height:26px}
+nav .links{display:flex;gap:22px;color:var(--mut);font-size:14.5px}nav .links a:hover{color:var(--fg)}
 .sp{flex:1}
-.btn{display:inline-flex;align-items:center;gap:8px;border-radius:8px;padding:9px 16px;font:inherit;font-size:14px;font-weight:600;border:1px solid var(--line);background:transparent;color:var(--fg);cursor:pointer;transition:.15s}
-.btn.w{background:#fff;color:#000;border-color:#fff}.btn.w:hover{background:#ddd}.btn.g:hover{background:#1a1a1a}
-.lang{padding:6px 12px;font-size:13px}
-.hero{text-align:center;padding:88px 0 56px;position:relative;overflow:hidden}
-.hero::before{content:"";position:absolute;inset:-40% -10% auto;height:520px;background:radial-gradient(closest-side,rgba(62,207,142,.16),transparent);pointer-events:none}
-.pill{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:13px;color:var(--mut);margin-bottom:22px}.pill b{color:var(--ok)}
-h1{font-size:clamp(38px,7vw,68px);line-height:1.08;letter-spacing:-.04em;margin:0 0 18px;font-weight:800}
-h1 span{background:linear-gradient(90deg,#fff,#7d7d7d);-webkit-background-clip:text;background-clip:text;color:transparent}
-.lead{color:var(--mut);font-size:clamp(17px,2.2vw,20px);max-width:660px;margin:0 auto 26px}
-.oneline{max-width:720px;margin:0 auto 30px;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;font-size:15px}
-.oneline .lb{font:500 11px "Geist Mono",monospace;color:var(--ok);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
-.oneline ol{margin:0;padding-left:20px;color:var(--mut)}.oneline li{margin:3px 0}.oneline b{color:var(--fg)}
-.cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-.term{margin:52px auto 0;max-width:760px;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;font:13.5px/1.75 "Geist Mono",monospace}
-.term .bar{display:flex;gap:6px;padding:10px 14px;border-bottom:1px solid var(--line)}.term .bar i{width:10px;height:10px;border-radius:50%;background:#333}
-.term pre{margin:0;padding:16px 18px;white-space:pre-wrap;color:var(--mut)}
-.term .k{color:var(--blue)}.term .o{color:var(--ok)}.term .r{color:var(--bad)}.term .w{color:var(--fg)}
-section{padding:72px 0;border-top:1px solid var(--line)}
-h2{font-size:clamp(28px,4vw,40px);letter-spacing:-.03em;margin:0 0 10px;font-weight:700}
-.sub{color:var(--mut);margin:0 0 36px;max-width:640px}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:12px;overflow:hidden}
-.grid>div{padding:22px;border-right:1px solid var(--line)}.grid>div:last-child{border-right:0}
-.n{font:500 12px "Geist Mono",monospace;color:var(--mut)}.grid b{display:block;margin:8px 0 6px;font-size:16px}.grid p{margin:0;color:var(--mut);font-size:14px}
-.flow{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap;margin-bottom:28px}
-.flow i{align-self:center;color:var(--mut);font-style:normal}
-.fb{flex:1;min-width:120px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
-.fb .n{font-size:11px;text-transform:uppercase}.fb b{display:block;font-size:14px;margin-top:2px}.fb small{color:var(--mut);font-size:12px}.fb.ok{border-color:var(--ok)}
-.steps{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.step{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px}
-.sn{font-weight:700;font-size:15px;margin-bottom:6px}.step p{color:var(--mut);font-size:14px;margin:0 0 12px}.step p b{color:var(--fg)}
-.snip{margin:0;background:#050505;border:1px solid #1c1c1c;border-radius:8px;padding:12px;font:12px/1.7 "Geist Mono",monospace;white-space:pre-wrap;color:var(--fg);overflow:auto}
-.snip .a{color:#9ff0c9}.snip .d{color:#ffb3b5}.snip .c{color:var(--mut)}
-.gates{margin-top:16px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
-.gates .lb{padding:12px 18px;font:500 12px "Geist Mono",monospace;color:var(--mut);text-transform:uppercase;border-bottom:1px solid var(--line)}
-.gt{display:grid;grid-template-columns:200px 1fr;gap:12px;padding:12px 18px;border-bottom:1px solid #1c1c1c;font-size:14px}.gt:last-child{border-bottom:0}.gt span{color:var(--mut)}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px}
-.card ul{margin:10px 0 0;padding:0;list-style:none}.card li{padding:7px 0;border-top:1px solid #1c1c1c;color:var(--mut);font-size:14.5px}.card li:first-child{border-top:0}.card li b{color:var(--fg);font-weight:600}
-.price{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.tier{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:24px;display:flex;flex-direction:column}
-.tier.hot{border-color:var(--ok);box-shadow:0 0 0 1px var(--ok)}
-.tier h3{margin:0;font-size:16px}.tier .amt{font-size:38px;font-weight:700;letter-spacing:-.03em;margin:10px 0 2px}.tier .amt small{font-size:15px;color:var(--mut);font-weight:500}
-.tier p{color:var(--mut);font-size:14px;margin:0 0 14px}
-.tier ul{list-style:none;margin:0 0 20px;padding:0;flex:1}.tier li{font-size:14px;padding:5px 0}.tier li::before{content:"✓  ";color:var(--ok)}
-.note{color:var(--mut);font-size:13px;margin-top:14px}
-footer{border-top:1px solid var(--line);padding:28px 0;color:var(--mut);font-size:13px}
-@media(max-width:820px){.grid{grid-template-columns:1fr 1fr}.grid>div:nth-child(2){border-right:0}.grid>div{border-bottom:1px solid var(--line)}.two,.price,.steps{grid-template-columns:1fr}nav .links{display:none}.gt{grid-template-columns:1fr;gap:2px}.flow i{display:none}}
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:10px 18px;font:600 14.5px Inter,sans-serif;border:1px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer;transition:.15s}
+.btn:hover{border-color:#cfc9bb}.btn.k{background:var(--ink);color:#fff;border-color:var(--ink)}.btn.k:hover{background:#2c2a22}
+.lang{padding:7px 14px;font-size:13px}
+.hero{display:grid;grid-template-columns:1.05fr 1fr;gap:48px;align-items:center;padding:72px 0 64px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;background:var(--okbg);color:var(--ok);border-radius:999px;padding:5px 12px;font:600 13px Inter,sans-serif;margin-bottom:20px}
+h1{font:800 clamp(40px,5.6vw,64px)/1.04 "Inter Tight","Apple SD Gothic Neo",sans-serif;letter-spacing:-.035em;margin:0 0 20px}
+h1 em{font-style:normal;color:var(--ok)}
+.lead{color:var(--mut);font-size:clamp(17px,1.6vw,19px);margin:0 0 28px;max-width:540px}
+.cta{display:flex;gap:10px;flex-wrap:wrap}
+.trust{display:flex;gap:18px;margin-top:26px;color:var(--mut);font-size:13.5px;flex-wrap:wrap}.trust span::before{content:"✓ ";color:var(--ok);font-weight:700}
+.stage{position:relative;height:440px}
+.c{position:absolute;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 18px 40px -18px rgba(40,35,20,.25);padding:16px 18px}
+.c .h{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--mut);flex-wrap:wrap}
+.c b{display:block;font:700 15.5px "Inter Tight",sans-serif;margin-top:6px;color:var(--fg)}
+.pill{font:600 11.5px Inter,sans-serif;border-radius:999px;padding:2px 9px}
+.p-amber{background:var(--amberbg);color:var(--amber)}.p-blue{background:var(--bluebg);color:var(--blue)}.p-ok{background:var(--okbg);color:var(--ok)}
+.c1{top:0;left:0;width:78%}
+.c1 ul{margin:10px 0 0;padding:0;list-style:none;font:12.5px/1.8 "JetBrains Mono",monospace;color:var(--fg)}.c1 li::before{content:"● ";color:var(--amber)}
+.c2{top:150px;right:0;width:86%;z-index:2}
+.diff{margin-top:10px;border-radius:10px;overflow:hidden;font:12.2px/1.75 "JetBrains Mono",monospace;border:1px solid var(--line)}
+.diff div{padding:0 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.d{background:var(--badbg);color:#8f2a20}.a{background:var(--okbg);color:#0b6b46}
+.checks{display:flex;gap:8px;margin-top:10px;font:600 12px "JetBrains Mono",monospace}.checks span{border-radius:8px;padding:3px 9px}
+.c3{bottom:0;left:6%;width:60%;display:flex;gap:12px;align-items:center}
+.c3 .ic{width:38px;height:38px;border-radius:12px;background:var(--ink);color:#fff;display:grid;place-items:center;font-size:18px;flex:none}
+.c3 small{display:block;color:var(--mut);font-size:12.5px}
+.arrow{position:absolute;left:38%;top:112px;color:var(--ok);font-size:26px;font-weight:800}
+section{padding:84px 0;border-top:1px solid var(--line)}
+.kick{font:600 13px Inter,sans-serif;color:var(--ok);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+h2{font:800 clamp(30px,3.8vw,44px)/1.1 "Inter Tight","Apple SD Gothic Neo",sans-serif;letter-spacing:-.03em;margin:0 0 12px}
+.sub{color:var(--mut);margin:0 0 40px;max-width:640px;font-size:17px}
+.four{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.f{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px}
+.f .n{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font:800 15px "Inter Tight",sans-serif;margin-bottom:14px}
+.f b{display:block;font:700 17px "Inter Tight",sans-serif;margin-bottom:6px}.f p{margin:0;color:var(--mut);font-size:14.5px}
+.flow{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+.flow i{align-self:center;color:var(--ok);font-style:normal;font-weight:800}
+.fb{flex:1;min-width:120px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.fb .n{font:600 11px Inter,sans-serif;color:var(--mut);text-transform:uppercase;letter-spacing:.06em}.fb b{display:block;font:700 14.5px "Inter Tight",sans-serif;margin-top:2px}.fb small{color:var(--mut);font-size:12px}.fb.ok{border-color:var(--ok);background:var(--okbg)}
+.steps{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px}
+.sn{font:700 16px "Inter Tight",sans-serif;margin-bottom:6px}.step p{color:var(--mut);font-size:14.5px;margin:0 0 12px}.step p b{color:var(--fg)}
+.snip{margin:0;background:#fbfaf7;border:1px solid var(--line);border-radius:10px;padding:12px;font:12.2px/1.75 "JetBrains Mono",monospace;white-space:pre-wrap;color:var(--fg);overflow:auto}
+.snip .a{color:#0b6b46;background:none}.snip .d{color:#8f2a20;background:none}.snip .c{color:var(--mut)}
+.gates{margin-top:14px;background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.gates .lb{padding:14px 20px;font:600 13px Inter,sans-serif;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--line)}
+.gt{display:grid;grid-template-columns:210px 1fr;gap:12px;padding:13px 20px;border-bottom:1px solid var(--line);font-size:14.5px}.gt:last-child{border-bottom:0}.gt span{color:var(--mut)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px}
+.card>b{font:700 17px "Inter Tight",sans-serif}
+.card ul{margin:12px 0 0;padding:0;list-style:none}.card li{padding:9px 0;border-top:1px solid var(--line);color:var(--mut);font-size:14.5px}.card li:first-child{border-top:0}.card li b{color:var(--fg);font-weight:600}
+.price{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.tier{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px;display:flex;flex-direction:column}
+.tier.hot{background:var(--ink);color:#fff;border-color:var(--ink)}.tier.hot p,.tier.hot .amt small{color:#bdb8ab}
+.tier h3{margin:0;font:700 17px "Inter Tight",sans-serif}.tier .amt{font:800 42px "Inter Tight",sans-serif;letter-spacing:-.03em;margin:10px 0 2px}.tier .amt small{font-size:15px;color:var(--mut);font-weight:500}
+.tier p{color:var(--mut);font-size:14.5px;margin:0 0 14px}
+.tier ul{list-style:none;margin:0 0 22px;padding:0;flex:1}.tier li{font-size:14.5px;padding:5px 0}.tier li::before{content:"✓  ";color:var(--ok);font-weight:700}
+.tier.hot .btn{background:#fff;color:var(--ink);border-color:#fff}
+.note{color:var(--mut);font-size:13px;margin-top:16px}
+footer{border-top:1px solid var(--line);padding:30px 0;color:var(--mut);font-size:13.5px}
+@media(max-width:900px){.hero{grid-template-columns:1fr;padding-top:48px}.stage{height:460px}.four{grid-template-columns:1fr 1fr}.two,.price,.steps{grid-template-columns:1fr}nav .links{display:none}.gt{grid-template-columns:1fr;gap:2px}.flow i{display:none}}
 </style>
 </head>
 <body>
 <nav><div class="wrap">
-  <a class="logo" href="/"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="1" y="1" width="22" height="22" rx="7" fill="#3ecf8e"/><path d="M5.5 14.5c2-3 4-3 6 0s4 3 6 0" stroke="#000" stroke-width="2.2" stroke-linecap="round"/><path d="M5.5 9.5h13" stroke="#000" stroke-width="2.2" stroke-linecap="round" opacity=".35"/></svg>Driftless</a>
+  <a class="logo" href="/"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="1" y="1" width="22" height="22" rx="7" fill="#12a36a"/><path d="M5.5 14.5c2-3 4-3 6 0s4 3 6 0" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><path d="M5.5 9.5h13" stroke="#fff" stroke-width="2.2" stroke-linecap="round" opacity=".45"/></svg>Driftless</a>
   <div class="links"><a href="#how" data-ko="작동 방식">How it works</a><a href="#under" data-ko="동작 원리">Under the hood</a><a href="#trust" data-ko="보안">Security</a><a href="#pricing" data-ko="가격">Pricing</a></div>
-  <span class="sp"></span><button class="btn g lang" id="lang">한국어</button><a class="btn w" href="/app.html" data-ko="대시보드 열기">Open dashboard</a>
+  <span class="sp"></span><button class="btn lang" id="lang">한국어</button><a class="btn k" href="/app.html" data-ko="데모 열기">Open demo</a>
 </div></nav>
 
-<header class="hero"><div class="wrap">
-  <div class="pill"><b>●</b> <span data-ko="라이브 데모 · Paylite API v1 → v2">Live demo · Paylite API v1 → v2</span></div>
-  <h1 data-ko="<span>외부 API는 바뀝니다.</span><br>내 코드는 따라갑니다.">
-    <span>APIs drift.</span><br>Your code doesn't.</h1>
-  <p class="lead" data-ko="내가 쓰는 외부 API나 지켜보고 싶은 웹페이지를 등록하세요. 바뀌면 Slack·이메일로 알려 주고, API 변화는 AI가 내 코드를 고쳐 테스트로 검증한 뒤 GitHub PR로 올립니다.">Register the third-party APIs you call and the pages you care about. When they change, you get Slack and email alerts, and API changes arrive as a GitHub PR that AI wrote and your tests verified.</p>
-  <div class="oneline">
-    <div class="lb" data-ko="예를 들면">For example</div>
-    <ol>
-      <li data-ko="결제 API 회사가 주소를 <b>/v1/charges → /v2/payments</b>로 바꾸고 응답 필드 이름도 바꿨다">A payments API moves <b>/v1/charges → /v2/payments</b> and renames a response field</li>
-      <li data-ko="내 쇼핑몰의 결제 코드는 그대로라 <b>결제가 실패</b>하기 시작한다. 변경 공지는 아무도 안 읽었다">Your checkout code still calls the old one and <b>starts failing</b>. Nobody read the changelog</li>
-      <li data-ko="Driftless는 바뀐 것을 감지하고, <b>내 코드를 고친 PR</b>을 올린다. 테스트 통과가 확인된 것만">Driftless notices, and opens <b>a PR that fixes your code</b>. Only after your tests pass</li>
-    </ol>
+<div class="wrap" id="hero">
+<header class="hero">
+  <div>
+    <div class="eyebrow">● <span>YC RFS · Self-Maintaining APIs</span></div>
+    <h1 data-ko="외부 API가 바뀌어도<br>내 코드는 <em>제자리에</em>.">APIs drift.<br>Your code <em>doesn't</em>.</h1>
+    <p class="lead" data-ko="쓰는 API와 지켜볼 페이지를 등록하세요. 바뀌면 Slack·이메일로 알려 주고, API 변화는 Claude가 내 코드를 고쳐 테스트로 검증한 뒤 GitHub PR로 보냅니다.">Register the APIs you call and the pages you care about. When they change, you get Slack and email alerts — and API changes arrive as a GitHub PR that Claude wrote and your tests verified.</p>
+    <div class="cta"><a class="btn k" href="/app.html" data-ko="라이브 데모 해보기 →">Try the live demo →</a><a class="btn" href="#under" data-ko="동작 원리">How it works</a></div>
+    <div class="trust"><span data-ko="테스트 통과한 PR만">Only test-verified PRs</span><span data-ko="병합은 사람이">Humans merge</span><span data-ko="AI 에이전트용 MCP">MCP for AI agents</span></div>
   </div>
-  <div class="cta"><a class="btn w" href="/app.html" data-ko="라이브 데모 해보기 →">Try the live demo →</a><a class="btn g" href="#under" data-ko="동작 원리 보기">See how it works</a></div>
-  <div class="term"><div class="bar"><i></i><i></i><i></i></div><pre><span class="k">webhook</span>  Paylite published <span class="w">v2</span>
-<span class="k">diff</span>     POST /v1/charges → <span class="w">/v2/payments</span> · response <span class="w">status → state</span> · breaking
-<span class="k">scan</span>     shop_client.py:17  create_charge()   shop_client.py:22  charge_status()
-<span class="k">test</span>     main vs live API      <span class="r">FAILED (errors=2)</span>   404 no such endpoint POST /v1/charges
-<span class="k">patch</span>    scoped to 2 functions · range guard <span class="o">passed</span>
-<span class="k">test</span>     patched vs v2         <span class="o">OK</span>
-<span class="k">pr</span>       <span class="w">#1 Adapt to Paylite API v2</span>  red → green · waiting for your review</pre></div>
-</div></header>
+  <div class="stage" aria-hidden="true">
+    <div class="c c1"><div class="h"><span class="pill p-amber" data-ko="변경 감지">Change detected</span><span>Paylite API · v1 → v2</span></div>
+      <b data-ko="깨지는 변경 3건">3 breaking changes</b>
+      <ul><li>POST /v1/charges → /v2/payments</li><li>status → state</li><li>+ idempotency_key (required)</li></ul></div>
+    <div class="c c2"><div class="h"><span class="pill p-ok" data-ko="PR 열림">Open</span><span class="pill p-blue" data-ko="✨ Claude가 작성">✨ Written by Claude</span><span>#1 · acme-shop</span></div>
+      <b data-ko="Paylite API v2에 맞게 수정">Adapt to Paylite API v2</b>
+      <div class="diff"><div class="d">-  r = _call("POST", "/v1/charges", {...})</div><div class="a">+  r = _call("POST", "/v2/payments", {"idempotency_key": ...})</div><div class="d">-  return r["id"], r["status"]</div><div class="a">+  return r["id"], r["state"]</div></div>
+      <div class="checks"><span style="background:var(--badbg);color:var(--bad)">before FAILED</span><span style="background:var(--okbg);color:var(--ok)">after OK</span></div></div>
+    <div class="c c3"><div class="ic">#</div><div><b style="margin:0" data-ko="Slack · 이메일 알림 발송">Slack · email alert sent</b><small data-ko="“PR #1 준비됨: Paylite v2”">“PR #1 ready: Paylite v2”</small></div></div>
+  </div>
+</header>
+</div>
 
 <section id="how"><div class="wrap">
+  <div class="kick" data-ko="작동 방식">How it works</div>
   <h2 data-ko="소스 → 감지 → 고침 → 알림">Source → detect → fix → alert.</h2>
-  <p class="sub" data-ko="변경 공지는 아무도 안 읽습니다. Driftless는 공지 대신 API 명세(스펙)를 읽고, 내 코드가 실제로 영향받을 때만 움직입니다.">Nobody reads changelogs. Driftless reads the spec instead, and only speaks up when your code is actually affected.</p>
-  <div class="grid">
-    <div><span class="n" data-ko="01 · 소스">01 · SOURCE</span><b data-ko="API 명세 또는 웹페이지">API spec or web page</b><p data-ko="지켜볼 대상을 고릅니다. OpenAPI 명세(JSON)는 엔드포인트 단위로, 웹페이지는 크롤링해서 글 단위로 비교합니다.">Pick what to watch. OpenAPI specs (JSON) are compared by endpoint; web pages are crawled and compared by text.</p></div>
-    <div><span class="n" data-ko="02 · 감지">02 · DETECT</span><b data-ko="주기적으로 확인">Checked on a schedule</b><p data-ko="정해진 간격으로 순서대로 확인합니다. 첫 확인은 기준선, 이후엔 달라진 것만. 빈 응답은 기준선을 덮지 않습니다.">Checked one at a time on an interval. First check is the baseline; after that, only what changed. Empty responses never overwrite the baseline.</p></div>
-    <div><span class="n" data-ko="03 · 고침">03 · FIX</span><b data-ko="AI가 코드를 고침">AI fixes the code</b><p data-ko="API가 바뀌면 Claude가 영향받는 코드를 고치고 PR 설명을 씁니다. 범위 검사와 내 테스트를 통과해야만 PR이 됩니다.">When an API changes, Claude patches the affected code and writes the PR. It must pass the range guard and your tests to become a PR.</p></div>
-    <div><span class="n" data-ko="04 · 알림">04 · ALERT</span><b>Slack · Email · GitHub PR</b><p data-ko="바뀐 내용을 Slack과 이메일로 보내고, 코드 수정은 GitHub PR로 올립니다. 병합은 사람이 합니다.">Changes go to Slack and email; code fixes arrive as GitHub PRs. A human merges.</p></div>
+  <p class="sub" data-ko="변경 공지는 아무도 안 읽습니다. Driftless는 명세와 페이지 자체를 읽고, 내 코드가 영향받을 때만 움직입니다.">Nobody reads changelogs. Driftless reads the spec and the page itself, and only moves when your code is affected.</p>
+  <div class="four">
+    <div class="f"><div class="n" style="background:var(--bluebg);color:var(--blue)">1</div><b data-ko="API 명세 또는 웹페이지">API spec or web page</b><p data-ko="OpenAPI 명세는 엔드포인트 단위로, 웹페이지는 크롤링해서 글 단위로 비교합니다.">OpenAPI specs are compared by endpoint; web pages are crawled and compared by text.</p></div>
+    <div class="f"><div class="n" style="background:var(--amberbg);color:var(--amber)">2</div><b data-ko="주기적으로 확인">Checked on a schedule</b><p data-ko="한 번에 하나씩 정해진 간격으로. 첫 확인은 기준선, 이후엔 달라진 것만. 빈 응답은 기준선을 덮지 않습니다.">One at a time, on an interval. First check is the baseline; after that, only what changed. Empty responses never overwrite it.</p></div>
+    <div class="f"><div class="n" style="background:var(--okbg);color:var(--ok)">3</div><b data-ko="AI가 코드를 고침">AI fixes the code</b><p data-ko="Claude가 영향받은 코드를 고치고 PR을 씁니다. 범위 검사와 내 테스트를 통과해야만 PR이 됩니다.">Claude patches the affected code and writes the PR. It must pass the range guard and your tests.</p></div>
+    <div class="f"><div class="n" style="background:#f0ecff;color:#6a4fd6">4</div><b>Slack · Email · PR</b><p data-ko="바뀐 내용은 Slack과 이메일로, 코드 수정은 GitHub PR로. 병합은 사람이 합니다.">Changes go to Slack and email; fixes arrive as GitHub PRs. A human merges.</p></div>
   </div>
 </div></section>
 
 <section id="under"><div class="wrap">
-  <h2 data-ko="동작 원리">Under the hood</h2>
-  <p class="sub" data-ko="변경 하나를 처음부터 끝까지 따라가 봅니다. 화살표마다 검사가 있고, 하나라도 실패하면 코드를 건드리기 전에 멈춥니다.">One provider change, followed through every step. Each arrow is a check; a failed check stops the run before your code is touched.</p>
+  <div class="kick" data-ko="동작 원리">Under the hood</div>
+  <h2 data-ko="화살표마다 검사가 있습니다">Every arrow is a check.</h2>
+  <p class="sub" data-ko="하나라도 실패하면 코드를 건드리기 전에 멈춥니다.">If any check fails, the run stops before your code is touched.</p>
   <div class="flow">
     <div class="fb"><span class="n">Paylite</span><b data-ko="스펙 v2 발행">Spec v2 published</b></div><i>→</i>
     <div class="fb"><span class="n">diff</span><b data-ko="깨지는 변경 3건">3 breaking changes</b></div><i>→</i>
     <div class="fb"><span class="n">scan</span><b data-ko="영향받는 함수 2개">2 functions affected</b></div><i>→</i>
-    <div class="fb"><span class="n">patch</span><b data-ko="범위 안 수정">scoped edit</b></div><i>→</i>
-    <div class="fb"><span class="n">verify</span><b data-ko="테스트 빨강 → 초록">tests red → green</b></div><i>→</i>
+    <div class="fb"><span class="n">Claude</span><b data-ko="수정 + PR 작성">patch + PR text</b></div><i>→</i>
+    <div class="fb"><span class="n">verify</span><b data-ko="빨강 → 초록">red → green</b></div><i>→</i>
     <div class="fb ok"><span class="n">result</span><b>PR</b><small data-ko="또는 이슈">or issue</small></div>
   </div>
   <div class="steps">
-    <div class="step"><div class="sn" data-ko="1 · 공지가 아니라 명세를 비교한다">1 · Diff the contract, not the changelog</div>
-      <p data-ko="스펙의 필드마다 바뀌지 않는 정체(canon)가 있습니다. 정체는 같은데 이름이 다르면 <b>이름 변경</b>, 정체가 사라지면 <b>삭제</b>, 새 필수 필드면 <b>호출할 때 꼭 보내야 함</b>입니다.">Every field carries a stable identity in the spec. Same identity, new name means <b>renamed</b>. Identity gone means <b>removed</b>. New required field means <b>callers must send it</b>.</p>
-<pre class="snip"><span class="d">- "status":  { "canon": "status" }</span>
-<span class="a">+ "state":   { "canon": "status" }</span>   <span class="c">→ renamed</span>
-<span class="a">+ "idempotency_key": { "required": true,
-    "x-migration-default": "str(uuid.uuid4())" }</span>   <span class="c">→ provider says how to fill it</span></pre></div>
-    <div class="step"><div class="sn" data-ko="2 · 정확한 호출 위치를 찾는다">2 · Find the exact call sites</div>
-      <p data-ko="코드를 함수 단위로 분석합니다. 바뀐 주소를 같은 HTTP 방식으로 부르는 함수만 영향받은 것으로 봅니다. 나머지는 건드리지 않습니다.">The repo is parsed into functions. A function is affected only if it calls the changed endpoint with the same HTTP method. Everything else is left alone.</p>
-<pre class="snip"><span class="c">shop_client.py:17–19</span>  create_charge()   POST /v1/charges
-<span class="c">shop_client.py:22–24</span>  charge_status()   GET  /v1/charges/{id}
-<span class="c">shop_client.py:9–14 </span>  _call()           <span class="c">not affected</span></pre></div>
-    <div class="step"><div class="sn" data-ko="3 · AI가 고치고, 범위를 검사한다">3 · AI patches, the guard checks the range</div>
-      <p data-ko="Claude가 바뀐 명세와 코드를 보고 수정본과 PR 설명을 씁니다. 수정 전후를 비교해 영향받은 함수 밖이 바뀌었으면 거부하고 규칙 기반 수정으로 대체합니다.">Claude reads the spec change and your code, then writes the patch and the PR description. The range guard compares old and new files and rejects any edit outside the affected functions, falling back to a rule-based patch.</p>
-<pre class="snip"><span class="d">-  r = _call("POST", "/v1/charges", {"amount": amount, ...})</span>
-<span class="a">+  r = _call("POST", "/v2/payments", {"idempotency_key": str(uuid.uuid4()), "amount": amount, ...})</span>
-<span class="d">-  return r["id"], r["status"]</span>
-<span class="a">+  return r["id"], r["state"]</span></pre></div>
-    <div class="step"><div class="sn" data-ko="4 · 보여 주기 전에 증명한다">4 · Prove it before anyone sees it</div>
-      <p data-ko="내 테스트를 새 API로 두 번 돌립니다. <b>main</b>에서는 실패해야 하고(정말 깨졌다는 증거), <b>수정본</b>에서는 통과해야 합니다. 그때만 PR이 열립니다.">Your own tests run twice against the new API: on <b>main</b> (should fail, shows the break is real) and on the <b>patched copy</b> (must pass). Only then is a PR opened.</p>
-<pre class="snip">main     vs v2   <span class="d">FAILED (errors=2)</span>  404 no such endpoint POST /v1/charges
-patched  vs v2   <span class="a">OK</span>
-<span class="c">→ PR #1 "Adapt to Paylite API v2"</span></pre></div>
+    <div class="step"><div class="sn" data-ko="1 · 공지가 아니라 명세를 비교">1 · Diff the contract, not the changelog</div>
+      <p data-ko="필드마다 바뀌지 않는 정체(canon)가 있습니다. 같은 정체·다른 이름이면 <b>이름 변경</b>, 정체가 사라지면 <b>삭제</b>입니다.">Every field has a stable identity. Same identity, new name means <b>renamed</b>. Identity gone means <b>removed</b>.</p>
+<pre class="snip"><span class="d">- "status": { "canon": "status" }</span>
+<span class="a">+ "state":  { "canon": "status" }</span>   <span class="c">→ renamed</span></pre></div>
+    <div class="step"><div class="sn" data-ko="2 · 정확한 호출 위치 찾기">2 · Find the exact call sites</div>
+      <p data-ko="바뀐 주소를 같은 HTTP 방식으로 부르는 함수만 영향받은 것으로 봅니다.">Only functions that call the changed endpoint with the same HTTP method are affected.</p>
+<pre class="snip"><span class="c">shop_client.py:17</span>  create_charge()  POST /v1/charges
+<span class="c">shop_client.py:22</span>  charge_status()  GET  /v1/charges/{id}</pre></div>
+    <div class="step"><div class="sn" data-ko="3 · Claude가 고치고, 범위를 검사">3 · Claude patches, the guard checks</div>
+      <p data-ko="영향받은 함수 밖을 건드리면 거부하고 규칙 기반 수정으로 대체합니다.">Any edit outside the affected functions is rejected and replaced by a rule-based patch.</p>
+<pre class="snip"><span class="d">-  r = _call("POST", "/v1/charges", ...)</span>
+<span class="a">+  r = _call("POST", "/v2/payments", ...)</span></pre></div>
+    <div class="step"><div class="sn" data-ko="4 · 보여 주기 전에 증명">4 · Prove it before anyone sees it</div>
+      <p data-ko="main은 실패해야 하고(정말 깨졌다는 증거), 수정본은 통과해야 합니다.">main must fail (the break is real) and the patched copy must pass.</p>
+<pre class="snip">main     vs v2  <span class="d">FAILED (errors=2)</span>
+patched  vs v2  <span class="a">OK</span>  <span class="c">→ PR #1</span></pre></div>
   </div>
   <div class="gates">
     <div class="lb" data-ko="PR 대신 멈추는 경우">When Driftless stops instead of opening a PR</div>
-    <div class="gt"><b data-ko="영향받는 호출 없음">No affected calls</b><span data-ko="변경만 기록하고 아무것도 하지 않습니다.">Change logged, nothing else happens.</span></div>
-    <div class="gt"><b data-ko="안전한 수정 없음">No safe fix</b><span data-ko="내가 읽던 필드가 삭제됐거나, 채울 기본값이 없습니다. 이유를 적은 이슈를 엽니다.">A field you read was removed, or no migration default was given. Opens an issue with the reason.</span></div>
-    <div class="gt"><b data-ko="범위 밖 수정">Edit out of range</b><span data-ko="영향받은 함수 밖을 건드린 수정은 거부합니다.">Patch touched lines outside the affected functions. Rejected.</span></div>
-    <div class="gt"><b data-ko="테스트 여전히 실패">Tests still fail</b><span data-ko="수정본을 버리고, 실패 내용을 적은 이슈를 엽니다.">Patch is discarded. Opens an issue with the failing output.</span></div>
-    <div class="gt"><b data-ko="구독 안 함">Not subscribed</b><span data-ko="변경을 감지해 보여 주지만 저장소에는 아무것도 하지 않습니다.">Change detected and shown, no action on the repo.</span></div>
+    <div class="gt"><b data-ko="영향받는 호출 없음">No affected calls</b><span data-ko="변경만 기록합니다.">Change logged, nothing else.</span></div>
+    <div class="gt"><b data-ko="안전한 수정 없음">No safe fix</b><span data-ko="읽던 필드가 삭제됐거나 기본값이 없으면, 이유를 적은 이슈를 엽니다.">A field you read was removed, or no migration default exists. Opens an issue with the reason.</span></div>
+    <div class="gt"><b data-ko="범위 밖 수정">Edit out of range</b><span data-ko="거부합니다.">Rejected.</span></div>
+    <div class="gt"><b data-ko="테스트 여전히 실패">Tests still fail</b><span data-ko="수정본을 버리고 이슈를 엽니다.">Patch discarded, issue opened.</span></div>
   </div>
 </div></section>
 
 <section id="trust"><div class="wrap">
-  <h2 data-ko="내 코드를 맡길 수 있도록">Built to be trusted with your codebase.</h2>
-  <p class="sub" data-ko="저장소 접근을 맡기려면 조심스러워야 합니다. Driftless가 지키는 규칙입니다.">You give a tool access to your repo only if it is careful. These are the rules it follows.</p>
-  <div class="two">
+  <div class="kick" data-ko="보안">Security</div>
+  <h2 data-ko="내 코드를 맡길 수 있도록">Built to be trusted with your code.</h2>
+  <div class="two" style="margin-top:28px">
     <div class="card"><b data-ko="할 수 있는 것">What it can do</b><ul>
-      <li data-ko="저장소를 <b>읽고, 브랜치와 PR을 엽니다.</b> main에는 직접 쓰지 않습니다."><b>Read</b> your repo and <b>open branches and PRs.</b> Never pushes to main.</li>
-      <li data-ko="<b>영향받은 함수만 고칩니다.</b> 범위 밖 수정은 거부됩니다."><b>Patch only affected functions.</b> Out-of-range edits are rejected.</li>
-      <li data-ko="<b>새 API로 테스트가 통과할 때만</b> PR을 엽니다."><b>Open a PR only when tests pass</b> against the new API version.</li>
+      <li data-ko="저장소를 <b>읽고, 브랜치와 PR을 엽니다.</b> main에는 쓰지 않습니다.">It can <b>read your repo and open branches and PRs.</b> Never writes to main.</li>
+      <li data-ko="<b>영향받은 함수만</b> 고칩니다.">It patches <b>only affected functions.</b></li>
+      <li data-ko="<b>테스트가 통과할 때만</b> PR을 엽니다.">It opens a PR <b>only when tests pass.</b></li>
     </ul></div>
     <div class="card"><b data-ko="하지 않는 것">What it won't do</b><ul>
-      <li data-ko="대체할 것 없이 필드가 삭제되면 <b>추측하지 않고</b> 이슈를 엽니다."><b>Never guesses</b> when a field is removed with no replacement. It opens an issue.</li>
-      <li data-ko="<b>병합하지 않습니다.</b> 모든 변경은 사람이 검토합니다."><b>Never merges.</b> A human reviews every change.</li>
-      <li data-ko="<b>AI가 쓴 수정을 그대로 믿지 않습니다.</b> AI(Claude)에는 영향받는 파일만 보내고, 결과는 범위 검사와 테스트를 통과해야 PR이 됩니다. AI를 쓸 수 없으면 규칙 기반 수정으로 대체합니다."><b>Never trusts AI output blindly.</b> Only the affected file is sent to the AI (Claude). Its patch must pass the range guard and your tests to become a PR. Without AI, a rule-based patch is used.</li>
+      <li data-ko="필드가 대체 없이 삭제되면 <b>추측하지 않습니다.</b>"><b>Never guesses</b> when a field is removed with no replacement.</li>
+      <li data-ko="<b>병합하지 않습니다.</b> AI에게도 병합 권한이 없습니다."><b>Never merges.</b> AI agents can't merge either.</li>
+      <li data-ko="<b>AI 결과를 그대로 믿지 않습니다.</b> 영향받는 파일만 Claude에 보내고, 범위 검사와 테스트가 판정합니다."><b>Never trusts AI output blindly.</b> Only the affected file goes to Claude; the range guard and tests decide.</li>
     </ul></div>
   </div>
 </div></section>
 
 <section id="pricing"><div class="wrap">
-  <h2 data-ko="가격">Pricing</h2>
-  <p class="sub" data-ko="저장소 단위로 구독합니다. 모든 플랜은 검증된 PR만 엽니다.">Subscribe per repo. Every plan opens verified PRs only.</p>
+  <div class="kick" data-ko="가격">Pricing</div>
+  <h2 data-ko="저장소 단위 구독">Subscribe per repo.</h2>
+  <p class="sub" data-ko="모든 플랜은 검증된 PR만 엽니다.">Every plan opens verified PRs only.</p>
   <div class="price">
-    <div class="tier"><h3>Hobby</h3><div class="amt">$0</div><p data-ko="사이드 프로젝트용">For side projects.</p><ul><li data-ko="저장소 1개 · API 1개">1 repo · 1 API</li><li data-ko="하루 1회 스펙 확인">Daily spec checks</li><li data-ko="검증된 PR">Verified PRs</li></ul><a class="btn g" href="/app.html" data-ko="무료로 시작">Start free</a></div>
-    <div class="tier hot"><h3>Pro</h3><div class="amt">$20<small data-ko=" /저장소 /월"> /repo /mo</small></div><p data-ko="외부 API 위에서 서비스하는 팀용">For teams shipping on third-party APIs.</p><ul><li data-ko="API 무제한">Unlimited APIs</li><li data-ko="제공자 웹훅 즉시 반응">Instant provider webhooks</li><li data-ko="검증된 PR + 이슈">Verified PRs + issues</li><li data-ko="Slack 알림">Slack alerts</li></ul><a class="btn w" href="/app.html" data-ko="Pro 체험 시작">Start Pro trial</a></div>
-    <div class="tier"><h3>Provider</h3><div class="amt" data-ko="맞춤">Custom</div><p data-ko="API 회사용: 고객 코드를 깨뜨리지 않고 변경을 배포합니다.">For API companies: ship breaking changes without breaking customers.</p><ul><li data-ko="고객에게 '업데이트 에이전트' 제공">"Install our update agent" for your users</li><li data-ko="스펙에 마이그레이션 기본값 정의">Migration defaults in your spec</li><li data-ko="고객 전환 현황">Adoption analytics</li></ul><a class="btn g" href="/app.html" data-ko="문의하기">Talk to us</a></div>
+    <div class="tier"><h3>Hobby</h3><div class="amt">$0</div><p data-ko="사이드 프로젝트용">For side projects.</p><ul><li data-ko="저장소 1개 · 소스 3개">1 repo · 3 sources</li><li data-ko="하루 1회 확인">Daily checks</li><li data-ko="검증된 PR">Verified PRs</li></ul><a class="btn" href="/app.html" data-ko="무료로 시작">Start free</a></div>
+    <div class="tier hot"><h3>Pro</h3><div class="amt">$20<small data-ko=" /저장소 /월"> /repo /mo</small></div><p data-ko="외부 API 위에서 서비스하는 팀용">For teams shipping on third-party APIs.</p><ul><li data-ko="소스 무제한">Unlimited sources</li><li data-ko="웹훅 즉시 반응 · 1시간 주기 크롤링">Instant webhooks · hourly crawls</li><li data-ko="Claude가 쓴 PR + 이슈">Claude-written PRs + issues</li><li data-ko="Slack · 이메일 · MCP">Slack · email · MCP</li></ul><a class="btn" href="/app.html" data-ko="Pro 체험 시작">Start Pro trial</a></div>
+    <div class="tier"><h3>Provider</h3><div class="amt" data-ko="맞춤">Custom</div><p data-ko="API 회사용: 고객 코드를 깨뜨리지 않고 변경을 배포합니다.">For API companies: ship breaking changes without breaking customers.</p><ul><li data-ko="고객용 '업데이트 에이전트'">An "update agent" for your users</li><li data-ko="스펙에 마이그레이션 기본값">Migration defaults in your spec</li><li data-ko="고객 전환 현황">Adoption analytics</li></ul><a class="btn" href="/app.html" data-ko="문의하기">Talk to us</a></div>
   </div>
-  <p class="note" data-ko="해커톤 데모용 베타 가격입니다. Paylite는 데모를 위해 만든 가상의 API입니다.">Beta pricing for the hackathon demo. Paylite is a fictional API used for the demo.</p>
+  <p class="note" data-ko="해커톤 데모용 베타 가격입니다. Paylite는 데모를 위해 만든 가상의 API입니다.">Beta pricing for the hackathon demo. Paylite is a fictional API.</p>
 </div></section>
 
-<footer><div class="wrap" data-ko="Driftless · c0mpiled-17 Seoul에서 제작 · Paylite는 가상의 API입니다">Driftless · built at c0mpiled-17 Seoul · Paylite is fictional</div></footer>
+<footer><div class="wrap" data-ko="Driftless · c0mpiled-17 Seoul에서 제작 · github.com/RickYoon/driftless">Driftless · built at c0mpiled-17 Seoul · github.com/RickYoon/driftless</div></footer>
 <script>
 const els=[...document.querySelectorAll("[data-ko]")];els.forEach(e=>e.dataset.en=e.innerHTML);
 function setLang(l){els.forEach(e=>e.innerHTML=l==="ko"?e.dataset.ko:e.dataset.en);document.documentElement.lang=l;document.getElementById("lang").textContent=l==="ko"?"English":"한국어";try{localStorage.setItem("dl-lang",l)}catch(_){}}
-let L="en";try{L=localStorage.getItem("dl-lang")||(navigator.language||"").startsWith("ko")&&"ko"||"en"}catch(_){}
+let L="en";try{L=localStorage.getItem("dl-lang")||((navigator.language||"").startsWith("ko")?"ko":"en")}catch(_){}
 {const q=new URLSearchParams(location.search).get("lang");if(q==="ko"||q==="en")L=q;}
 setLang(L);document.getElementById("lang").onclick=()=>{L=L==="ko"?"en":"ko";setLang(L)};
 {const f=new URLSearchParams(location.search).get("focus");if(f){const go=()=>{const el=document.getElementById(f);if(!el)return;let n=el;while(n&&n.parentElement&&n!==document.body){[...n.parentElement.children].forEach(c=>{if(c!==n&&c.tagName!=="SCRIPT"&&c.tagName!=="NAV")c.style.display="none"});n=n.parentElement}window.scrollTo(0,0)};go();setInterval(go,300)}}

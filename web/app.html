@@ -7,15 +7,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#000;--fg:#ededed;--mut:#a1a1a1;--dim:#6b6b6b;--line:#2e2e2e;--card:#0a0a0a;--ok:#3ecf8e;--bad:#ff6166;--blue:#52a8ff;--amber:#f5a524;--purple:#a78bfa}
+:root{--bg:#f7f6f2;--fg:#16150f;--mut:#6b675e;--dim:#9a958a;--line:#e4e0d6;--card:#fff;--ok:#12a36a;--bad:#d9483b;--blue:#2f6fe4;--amber:#c27a12;--purple:#6a4fd6}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.6 Geist,"Apple SD Gothic Neo",-apple-system,sans-serif;-webkit-font-smoothing:antialiased;word-break:keep-all}
 a{color:inherit;text-decoration:none}
-nav{display:flex;align-items:center;gap:12px;height:58px;padding:0 20px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#000;z-index:5}
+nav{display:flex;align-items:center;gap:12px;height:58px;padding:0 20px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5}
 .logo{display:flex;align-items:center;gap:9px;font-weight:700;font-size:16px}.logo svg{width:22px;height:22px}
 .sp{flex:1}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:8px;padding:8px 14px;font:inherit;font-size:13.5px;font-weight:600;border:1px solid var(--line);background:transparent;color:var(--fg);cursor:pointer;transition:.15s;white-space:nowrap}
-.btn:hover{background:#1a1a1a}.btn.w{background:#fff;color:#000;border-color:#fff}.btn.w:hover{background:#ddd}
+.btn:hover{background:#efece4}.btn.w{background:var(--fg);color:#fff;border-color:var(--fg)}.btn.w:hover{background:#2c2a22}
 .btn.g{background:var(--ok);color:#000;border-color:var(--ok)}.btn:disabled{opacity:.35;cursor:not-allowed}
 .small{padding:5px 10px;font-size:12.5px}
 main{max-width:860px;margin:0 auto;padding:28px 18px 90px}
@@ -32,41 +32,41 @@ h1{font-size:26px;letter-spacing:-.02em;margin:0 0 6px}.lead{color:var(--mut);ma
 .meta{font:12.5px "Geist Mono",monospace;color:var(--mut);margin-top:6px}
 .meta .chg{color:var(--amber)}.meta .ok{color:var(--ok)}.meta .bad{color:var(--bad)}
 .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
-input,select{background:#050505;color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font:13px "Geist Mono",monospace;min-width:0}
-input:focus,select:focus{outline:none;border-color:#666}
+input,select{background:#fbfaf7;color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font:13px "Geist Mono",monospace;min-width:0}
+input:focus,select:focus{outline:none;border-color:#9a958a}
 .grow{flex:1}
 .add{border:1px dashed var(--line);border-radius:10px;padding:12px 14px}
 .lbl{font:500 11px "Geist Mono",monospace;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
-.log{list-style:none;margin:10px 0 0;padding:0;max-height:300px;overflow:auto;border-top:1px solid #1c1c1c}
-.log li{padding:7px 0;border-bottom:1px solid #141414;font-size:13.5px}
+.log{list-style:none;margin:10px 0 0;padding:0;max-height:300px;overflow:auto;border-top:1px solid #ece8de}
+.log li{padding:7px 0;border-bottom:1px solid #ece8de;font-size:13.5px}
 .log .t{font:11.5px "Geist Mono",monospace;color:var(--dim);margin-right:8px}.log .k{font:600 11px "Geist Mono",monospace;margin-right:6px;text-transform:uppercase}
 .log ul{margin:3px 0 0;padding-left:16px;font:12px "Geist Mono",monospace;color:var(--mut)}
 .chan{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .ch{border:1px solid var(--line);border-radius:10px;padding:12px}
 .ch b{display:flex;align-items:center;gap:8px}.ch .s{font:11.5px "Geist Mono",monospace;border-radius:999px;padding:1px 8px;margin-left:auto}
-.s.on{background:rgba(62,207,142,.14);color:var(--ok)}.s.off{background:#1a1a1a;color:var(--dim)}
+.s.on{background:rgba(62,207,142,.14);color:var(--ok)}.s.off{background:#efece4;color:var(--dim)}
 .ch input{width:100%;margin-top:7px}.ch p{font-size:12px;color:var(--dim);margin:6px 0 0}
 .out{list-style:none;margin:12px 0 0;padding:0}
-.out li{border:1px solid #1c1c1c;border-radius:8px;padding:8px 10px;margin-bottom:6px;font-size:13.5px}
+.out li{border:1px solid #ece8de;border-radius:8px;padding:8px 10px;margin-bottom:6px;font-size:13.5px}
 .out .cs{font:11.5px "Geist Mono",monospace;color:var(--dim);margin-top:3px}.cs .sent{color:var(--ok)}.cs .fail{color:var(--bad)}
 .steps{list-style:none;margin:10px 0 0;padding:0}
 .steps li{display:flex;gap:10px;align-items:center;padding:5px 0;color:var(--dim);font-size:14px}
-.steps li i{width:17px;height:17px;border-radius:50%;border:1.5px solid #444;flex:none;display:grid;place-items:center;font-style:normal;font-size:10px}
+.steps li i{width:17px;height:17px;border-radius:50%;border:1.5px solid #cfc9bb;flex:none;display:grid;place-items:center;font-style:normal;font-size:10px}
 .steps li.ok{color:var(--fg)}.steps li.ok i{background:var(--ok);border-color:var(--ok);color:#000}
-.steps li.now{color:var(--fg)}.steps li.now i{border-color:#fff;border-top-color:transparent;animation:sp 1s linear infinite}
+.steps li.now{color:var(--fg)}.steps li.now i{border-color:var(--fg);border-top-color:transparent;animation:sp 1s linear infinite}
 .steps small{color:var(--dim);margin-left:auto;font:12px "Geist Mono",monospace}
 @keyframes sp{to{transform:rotate(360deg)}}
 .pr{border:1px solid var(--line);border-radius:12px;margin-top:14px;overflow:hidden}
 .prh{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line);flex-wrap:wrap}
 .tag{font:600 11.5px "Geist Mono",monospace;border-radius:999px;padding:2px 9px}
-.tag.open{background:rgba(62,207,142,.14);color:var(--ok)}.tag.merged{background:rgba(167,139,250,.16);color:var(--purple)}.tag.ai{background:rgba(82,168,255,.14);color:var(--blue)}.tag.rules{background:#1a1a1a;color:var(--mut)}
+.tag.open{background:rgba(62,207,142,.14);color:var(--ok)}.tag.merged{background:rgba(167,139,250,.16);color:var(--purple)}.tag.ai{background:rgba(82,168,255,.14);color:var(--blue)}.tag.rules{background:#efece4;color:var(--mut)}
 .prt{font-weight:700;width:100%}
-.body{padding:12px 16px;font-size:14px;color:#d6d6d6}.body ul{margin:6px 0;padding-left:18px}.body p{margin:6px 0}.body code{font:12.5px "Geist Mono",monospace;background:#151515;padding:1px 5px;border-radius:4px}
+.body{padding:12px 16px;font-size:14px;color:#3a372f}.body ul{margin:6px 0;padding-left:18px}.body p{margin:6px 0}.body code{font:12.5px "Geist Mono",monospace;background:#f1efe9;padding:1px 5px;border-radius:4px}
 .cursor::after{content:"▍";color:var(--blue);animation:bl 1s steps(1) infinite}@keyframes bl{50%{opacity:0}}
 .checks{display:flex;gap:8px;padding:0 16px 12px;flex-wrap:wrap;font:12.5px "Geist Mono",monospace}.checks span{border:1px solid var(--line);border-radius:6px;padding:3px 9px}.red{color:var(--bad)}.green{color:var(--ok)}
 details{border-top:1px solid var(--line)}details summary{cursor:pointer;padding:9px 16px;color:var(--mut);font-size:13px}
-pre.diff{margin:0;font:12px/1.6 "Geist Mono",monospace;white-space:pre;overflow:auto;background:#050505;padding:8px 0;border-top:1px solid var(--line)}
-pre.diff div{padding:0 14px}.ad{background:rgba(62,207,142,.12);color:#9ff0c9}.de{background:rgba(255,97,102,.12);color:#ffb3b5}.hk{color:var(--blue)}
+pre.diff{margin:0;font:12px/1.6 "Geist Mono",monospace;white-space:pre;overflow:auto;background:#fbfaf7;padding:8px 0;border-top:1px solid var(--line)}
+pre.diff div{padding:0 14px}.ad{background:rgba(62,207,142,.12);color:#0b6b46}.de{background:rgba(255,97,102,.12);color:#8f2a20}.hk{color:var(--blue)}
 .act{padding:11px 16px;border-top:1px solid var(--line);display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13.5px}
 .issue{border:1px solid rgba(245,165,36,.5);border-radius:12px;margin-top:14px;padding:12px 14px}.issue b{color:var(--amber)}.issue ul{margin:6px 0 0;padding-left:18px;color:var(--mut);font-size:13.5px}
 .foot{color:var(--dim);font-size:12.5px;text-align:center;margin-top:20px}.foot a{text-decoration:underline}
@@ -74,7 +74,7 @@ pre.diff div{padding:0 14px}.ad{background:rgba(62,207,142,.12);color:#9ff0c9}.d
 </style>
 </head>
 <body>
-<nav><a class="logo" href="/"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="1" y="1" width="22" height="22" rx="7" fill="#3ecf8e"/><path d="M5.5 14.5c2-3 4-3 6 0s4 3 6 0" stroke="#000" stroke-width="2.2" stroke-linecap="round"/><path d="M5.5 9.5h13" stroke="#000" stroke-width="2.2" stroke-linecap="round" opacity=".35"/></svg>Driftless</a>
+<nav><a class="logo" href="/"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="1" y="1" width="22" height="22" rx="7" fill="#12a36a"/><path d="M5.5 14.5c2-3 4-3 6 0s4 3 6 0" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><path d="M5.5 9.5h13" stroke="#fff" stroke-width="2.2" stroke-linecap="round" opacity=".35"/></svg>Driftless</a>
 <span class="sp"></span><button class="btn small" id="lang">한국어</button><button class="btn small" id="reset" data-ko="처음부터">Start over</button></nav>
 <main>
   <h1 data-ko="지켜볼 것을 고르면, 바뀔 때 알려 주고 코드까지 고칩니다">Pick what to watch. We alert you when it changes, and fix your code.</h1>
