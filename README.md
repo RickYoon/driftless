@@ -1,60 +1,116 @@
-# Driftless — APIs drift. Your code doesn't.
+# Driftless
 
-**YC Request for Startups: Self-Maintaining APIs** · built at c0mpiled-17 Seoul (2026-11-09)
+**APIs drift. Your code doesn't.**
+A change monitor for the APIs and pages your product depends on — and when an API breaks your code, Claude writes the fix as a PR that your own tests have already verified.
 
-When a third-party API ships a breaking change, nobody reads the changelog until production breaks.
-Driftless subscribes your repo to the APIs it depends on. When the provider publishes a new spec, Driftless:
+> **The demo in one sentence:** a payments API ships a breaking v2, Driftless catches it, Claude patches the customer's code, the tests go from `FAILED` to `OK`, and a PR is waiting for a human to merge — while Slack/email get the alert and any AI assistant can ask Driftless what changed over MCP.
 
-1. **Detects** the change from a provider webhook and diffs the spec with rules (renamed fields, moved endpoints, new required params, removals). No LLM guessing at this step.
-2. **Scans** your code (Python AST) and maps each change to the exact functions that use it. No impact, no noise.
-3. **Writes the fix with AI**: Claude reads the spec change and your file, then writes the patch and the PR description. A range guard rejects any edit outside the affected functions (falls back to a rule-based patch).
-4. **Proves** it: runs your tests against the live new API before and after the patch.
-5. **Opens a PR** only when the patch turns tests from red to green. If a change has no safe fix (for example, a field you read was removed), it opens an **issue with the reason** instead of touching your code.
+YC Request for Startups: **Self-Maintaining APIs** · built at c0mpiled-17 Seoul (2026-11-09)
 
-A human always merges.
+---
 
-## Demo
+## Why this matters
 
-Paylite is a fictional payments API that runs inside the demo and behaves exactly as its current spec says.
-In the dashboard you play the provider: ship a change, publish, and watch the customer repo (`acme-shop`) get a verified PR.
+Third-party APIs change all the time: endpoints move, fields get renamed, new parameters become required. Providers announce it in a changelog nobody reads, and customers find out when production breaks. Agentic coding tools proved teams will let a tool touch their repo **if it is careful**. The missing piece is the layer that notices the change, applies it, and *proves* the fix before a human sees it.
 
-```bash
-python3 server.py          # http://127.0.0.1:8790  (landing)  ·  /app.html  (dashboard)
-python3 selftest.py        # end-to-end check on port 8791
+## Architecture
+
+```mermaid
+flowchart LR
+  A["Source<br/>API spec · web page"] --> B["Detect<br/>webhook or schedule"]
+  B --> C{"Breaking change<br/>affects your code?"}
+  C -->|no| N["Alert only<br/>Slack · email"]
+  C -->|yes| D["Scan<br/>AST → affected functions"]
+  D --> E["Claude<br/>patch + PR text"]
+  E --> G{"Range guard<br/>+ your tests"}
+  G -->|pass| P["GitHub PR<br/>+ alerts"]
+  G -->|fail| I["Issue with reason<br/>no code touched"]
+  P --> H["Human merges"]
+  M["Any AI assistant"] -. MCP .-> B
 ```
 
-Python 3.10+, git, and the `claude` CLI for AI-written PRs (optional; falls back to rules). Standard library only.
+## What works today
 
-- `/app.html` — the user flow: repo + API → API changes → Claude writes the PR → verified → merge
-- `/console.html` — every internal step, and you can play the API provider
+- [x] **Sources**: API specs (diffed by endpoint and field identity) and web pages (crawled, diffed by line)
+- [x] **Detection**: provider webhook, or scheduled checks run one at a time; the first check is the baseline, empty responses never overwrite it
+- [x] **AI fix**: Claude (via the `claude` CLI) writes the patch and the PR description; rule-based codemod fallback when AI is unavailable
+- [x] **Verification**: range guard (edits only inside affected functions) + tests run against the new API before and after the patch
+- [x] **Outputs**: PR (local repo branch, or a real GitHub repo when configured), Slack webhook, SMTP email, issue when no safe fix exists
+- [x] **MCP server**: AI assistants can ask what changed, add sources, read PRs — merge is never exposed
+- [x] **Self-test**: end-to-end and deterministic (`python3 selftest.py`)
 
-## Use it from an AI assistant (MCP)
+## Request lifecycle (API change)
+
+1. Provider publishes spec v2 → webhook hits `/hooks/paylite`
+2. Spec diff by stable field identity (`canon`): renamed / removed / new required
+3. AST scan maps each change to the functions that call that endpoint with that method
+4. Tests on `main` against the live v2 API → **FAILED** (proves the break is real)
+5. Claude writes patch + PR text → range guard rejects any edit outside affected functions
+6. Tests on the patched copy → **OK** → branch + PR + Slack/email alert
+7. A field you read was removed with no replacement → **issue**, no PR
+
+## Run locally in 60 seconds
 
 ```bash
-claude mcp add driftless -- python3 /path/to/selfmaint/mcp_server.py
+git clone https://github.com/RickYoon/driftless && cd driftless
+./run.sh                       # or: python3 server.py
+open http://127.0.0.1:8790     # landing  ·  /app.html demo  ·  /console.html internals
 ```
 
-Tools: `driftless_status`, `list_sources`, `add_source`, `check_now`, `recent_changes`, `list_prs`, `list_alerts`. Merging is not exposed. Verified: Claude answered "what changed in Paylite and what are the PR's test results" through these tools.
+Python 3.10+ and git. Standard library only. The `claude` CLI is optional (AI-written PRs; otherwise rule-based).
 
-## What the self-test checks
+## Connect Claude (MCP)
 
-- Breaking changes (endpoints move to `/v2/payments`, `status` → `state`, new required `idempotency_key`) → PR opens with tests `FAILED` → `OK`, then merges.
-- A removed response field the code depends on → issue, no PR.
-- Unsubscribed repo → change detected, no action.
+```bash
+claude mcp add driftless -- python3 /path/to/driftless/mcp_server.py
+```
 
-## Security model
+Tools: `driftless_status` · `list_sources` · `add_source` · `check_now` · `recent_changes` · `list_prs` · `list_alerts`. Verified: Claude answered *"what changed in Paylite, what PR was opened, and the test results"* using only these tools.
 
-- Scope: read the repo, create branches and PRs. Never writes to `main`, never merges.
-- Only the affected file is sent to the AI model (Claude, via the `claude` CLI). AI output is never trusted directly: range guard + your tests decide.
-- Without AI (`DRIFTLESS_AI=0` or no CLI), a deterministic rule-based patch is used.
-- Verification gate: no passing tests against the new API, no PR.
+## Judge demo
 
-## Business model
+1. `./run.sh`, open `/app.html`
+2. **Step 1** shows two sources: the Paylite API (webhook) and its changelog page (crawled every 15s)
+3. Click **Edit page (demo)** on the changelog → Step 2 shows only the changed line → Step 3 logs the alert
+4. Click **▶ Demo: Paylite changes its API** → the checklist runs → a PR tagged **✨ Written by Claude** appears with `before FAILED` / `after OK`
+5. Click **Merge pull request** (only a human can)
+6. In a terminal, ask Claude through MCP: *"What changed in Paylite and what do the PR's tests say?"*
 
-Subscription per repo (Hobby free · Pro $20/repo/mo · Provider plans for API companies that want to ship an "update agent" to their customers). Beta pricing for the demo.
+Deterministic fallback: `python3 selftest.py` runs the same pipeline with AI disabled.
 
-## Limits (honest)
+## Tests
 
-- One language (Python) and one fictional provider. Patch rules cover renames, path moves, new required params with a provider-supplied migration default.
-- Changes without a safe automatic fix are escalated as issues by design.
-- The "PR" is a real git branch + commit in a local repo; GitHub App integration is the next step.
+```
+$ python3 selftest.py
+PASS  breaking change -> PR (red -> green) -> merged
+PASS  unfixable change -> issue, no PR
+PASS  unsubscribed repo -> detected, no action
+```
+
+## Repository map
+
+| Path | What |
+|---|---|
+| `server.py` | Fake provider API, webhook, diff, scan, Claude patch, range guard, tests, PR, sources, scheduler, Slack/email/GitHub |
+| `mcp_server.py` | MCP server (stdio) for AI assistants |
+| `run.sh` | One-command start |
+| `web/index.html` | Landing (KO/EN) |
+| `web/app.html` | 3-step demo app (KO/EN) |
+| `web/console.html` | Every internal step; play the API provider |
+| `customer_template/` | The sample customer repo (`acme-shop`) and its tests |
+| `selftest.py` | End-to-end self-test |
+
+## Honest boundary
+
+- Paylite is a **fictional** API and `acme-shop` is a **local** sample repo. Real GitHub PRs need a repo configured in the app and push access.
+- One language (Python). Automatic fixes cover renames, moved endpoints, and new required params with a provider-supplied migration default. Anything else becomes an issue by design.
+- Only the affected file is sent to Claude. AI output is never trusted directly: the range guard and the tests decide.
+- Scheduler and state are in-process for the demo. Production would move detection to scheduled jobs and PRs to the GitHub API.
+
+## Stack
+
+Python standard library (`http.server`, `ast`, `difflib`, `smtplib`, `unittest`) · git · Claude (`claude` CLI) · MCP (stdio JSON-RPC) · plain HTML/CSS/JS.
+
+## The pitch
+
+**Every product runs on someone else's API. Driftless makes sure it keeps running when that API changes.**
