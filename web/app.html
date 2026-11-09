@@ -79,7 +79,7 @@ pre.diff div{padding:0 14px}.add{background:rgba(62,207,142,.12);color:#9ff0c9}.
       <input id="repo" value="github.com/acme/acme-shop" spellcheck="false">
       <label class="f" data-ko="코드가 호출하는 API">API your code calls</label>
       <select id="api"><option>Paylite API</option></select>
-      <div class="hint" data-ko="데모에서는 예시 저장소와 가상 결제 API(Paylite)로 동작합니다.">In this demo, a sample repo and a fictional payments API (Paylite) are used.</div>
+      <div class="hint" data-ko="데모에서는 실제 GitHub에 연결하지 않습니다. 이 컴퓨터의 예시 저장소와 가상 결제 API(Paylite)로 동작합니다.">This demo does not connect to real GitHub. It uses a local sample repo and a fictional payments API (Paylite).</div>
       <div style="margin-top:14px"><button class="btn w" id="go" data-ko="지켜보기 시작">Start watching</button></div>
     </div>
     <div id="watching" style="display:none" class="watch"><span class="dot"></span><span id="wtxt"></span></div>
@@ -115,7 +115,7 @@ function diffHtml(d){return d.split("\n").map(l=>{const c=l.startsWith("+++")||l
 function render(){
   const c=st.connected;
   $("#form").style.display=c?"none":"block";$("#watching").style.display=c?"flex":"none";
-  $("#wtxt").textContent=c?t(`${st.repo} · watching ${st.api} (v${st.main_version})`,`${st.repo} · ${st.api} 지켜보는 중 (v${st.main_version} 기준)`):"";
+  $("#wtxt").textContent=c?t(`${st.repo} (demo sample repo, local) · watching ${st.api} · code matches API v${st.main_version}`,`${st.repo} (데모용 예시 저장소, 로컬) · ${st.api} 지켜보는 중 · 코드가 API v${st.main_version}에 맞춰져 있음`):"";
   $("#c1").classList.toggle("done",c);
   $("#c2").classList.toggle("off",!c);
   $("#change").disabled=!c||st.busy||st.prs.some(p=>p.state==="open");
