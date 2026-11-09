@@ -50,12 +50,27 @@ h2{font-size:clamp(28px,4vw,40px);letter-spacing:-.03em;margin:0 0 10px;font-wei
 .tier p{color:var(--mut);font-size:14px;margin:0 0 14px}
 .tier ul{list-style:none;margin:0 0 20px;padding:0;flex:1}.tier li{font-size:14px;padding:5px 0;color:var(--fg)}.tier li::before{content:"✓  ";color:var(--ok)}
 .note{color:var(--mut);font-size:13px;margin-top:14px}
+.flow{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap;margin-bottom:28px}
+.flow i{align-self:center;color:var(--mut);font-style:normal}
+.fb{flex:1;min-width:120px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.fb .n{font:500 11px "Geist Mono",monospace;color:var(--mut);text-transform:uppercase}.fb b{display:block;font-size:14px;margin-top:2px}.fb small{color:var(--mut);font-size:12px}
+.fb.ok{border-color:var(--ok)}
+.steps{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px}
+.sn{font-weight:700;font-size:15px;margin-bottom:6px}.step p{color:var(--mut);font-size:14px;margin:0 0 12px}.step p b{color:var(--fg)}
+.snip{margin:0;background:#050505;border:1px solid #1c1c1c;border-radius:8px;padding:12px;font:12px/1.7 "Geist Mono",monospace;white-space:pre-wrap;color:var(--fg);overflow:auto}
+.snip .a{color:#9ff0c9}.snip .d{color:#ffb3b5}.snip .c{color:var(--mut)}
+.gates{margin-top:16px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.gates .lb{padding:12px 18px;font:500 12px "Geist Mono",monospace;color:var(--mut);text-transform:uppercase;border-bottom:1px solid var(--line)}
+.g{display:grid;grid-template-columns:200px 1fr;gap:12px;padding:12px 18px;border-bottom:1px solid #1c1c1c;font-size:14px}.g:last-child{border-bottom:0}
+.g span{color:var(--mut)}
+@media(max-width:820px){.steps{grid-template-columns:1fr}.g{grid-template-columns:1fr;gap:2px}.flow i{display:none}}
 footer{border-top:1px solid var(--line);padding:28px 0;color:var(--mut);font-size:13px}
 @media(max-width:820px){.grid{grid-template-columns:1fr 1fr}.grid>div:nth-child(2){border-right:0}.grid>div{border-bottom:1px solid var(--line)}.two,.price{grid-template-columns:1fr}nav .links{display:none}}
 </style>
 </head>
 <body>
-<nav><div class="wrap"><a class="logo" href="/"><i></i>Driftless</a><div class="links"><a href="#how">How it works</a><a href="#trust">Security</a><a href="#pricing">Pricing</a></div><span class="sp"></span><a class="btn w" href="/app.html">Open dashboard</a></div></nav>
+<nav><div class="wrap"><a class="logo" href="/"><i></i>Driftless</a><div class="links"><a href="#how">How it works</a><a href="#under">Under the hood</a><a href="#trust">Security</a><a href="#pricing">Pricing</a></div><span class="sp"></span><a class="btn w" href="/app.html">Open dashboard</a></div></nav>
 
 <header class="hero"><div class="wrap">
   <div class="pill"><b>●</b> Live demo · Paylite API v1 → v2</div>
@@ -79,6 +94,56 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--mut);font-siz
     <div><span class="n">02 · SCAN</span><b>Affected calls only</b><p>Parses your code and maps each change to the exact functions that use it. No impact, no noise.</p></div>
     <div><span class="n">03 · PATCH</span><b>Scoped fix</b><p>Edits only inside the affected functions. A range guard rejects any patch that reaches further.</p></div>
     <div><span class="n">04 · PROVE</span><b>Red → green, then PR</b><p>Runs your tests against the new API. Passing patch becomes a PR. Anything else becomes an issue with the reason.</p></div>
+  </div>
+</div></section>
+
+<section id="under"><div class="wrap">
+  <h2>Under the hood</h2>
+  <p class="sub">One provider change, followed through every step. Each arrow is a check; a failed check stops the run before your code is touched.</p>
+  <div class="flow">
+    <div class="fb"><span class="n">Paylite</span><b>Spec v2 published</b></div><i>→</i>
+    <div class="fb"><span class="n">diff</span><b>3 breaking changes</b></div><i>→</i>
+    <div class="fb"><span class="n">scan</span><b>2 functions affected</b></div><i>→</i>
+    <div class="fb"><span class="n">patch</span><b>scoped edit</b></div><i>→</i>
+    <div class="fb"><span class="n">verify</span><b>tests red → green</b></div><i>→</i>
+    <div class="fb ok"><span class="n">result</span><b>PR</b><small>or issue</small></div>
+  </div>
+
+  <div class="steps">
+    <div class="step"><div class="sn">1 · Diff the contract, not the changelog</div>
+      <p>Every field carries a stable identity in the spec. Same identity, new name means <b>renamed</b>. Identity gone means <b>removed</b>. New required field means <b>callers must send it</b>.</p>
+<pre class="snip"><span class="d">- "status":  { "canon": "status" }</span>
+<span class="a">+ "state":   { "canon": "status" }</span>   <span class="c">→ renamed, safe to rewrite</span>
+<span class="a">+ "idempotency_key": { "required": true,
+    "x-migration-default": "str(uuid.uuid4())" }</span>   <span class="c">→ provider says how to fill it</span></pre></div>
+
+    <div class="step"><div class="sn">2 · Find the exact call sites</div>
+      <p>The repo is parsed into functions. A function is affected only if it calls the changed endpoint with the same HTTP method. Everything else is left alone.</p>
+<pre class="snip"><span class="c">shop_client.py:17–19</span>  create_charge()   POST /v1/charges
+<span class="c">shop_client.py:22–24</span>  charge_status()   GET  /v1/charges/{id}
+<span class="c">shop_client.py:9–14 </span>  _call()           <span class="c">not affected</span></pre></div>
+
+    <div class="step"><div class="sn">3 · Patch inside those lines only</div>
+      <p>Rewrites are mechanical and scoped to the affected functions. A range guard compares old and new files and rejects any edit outside the allowed lines.</p>
+<pre class="snip"><span class="d">-  r = _call("POST", "/v1/charges", {"amount": amount, ...})</span>
+<span class="a">+  r = _call("POST", "/v2/payments", {"idempotency_key": str(uuid.uuid4()), "amount": amount, ...})</span>
+<span class="d">-  return r["id"], r["status"]</span>
+<span class="a">+  return r["id"], r["state"]</span></pre></div>
+
+    <div class="step"><div class="sn">4 · Prove it before anyone sees it</div>
+      <p>Your own tests run twice against the new API: on <b>main</b> (should fail, shows the break is real) and on the <b>patched copy</b> (must pass). Only then is a branch pushed and a PR opened.</p>
+<pre class="snip">main     vs v2   <span class="d">FAILED (errors=2)</span>  404 no such endpoint POST /v1/charges
+patched  vs v2   <span class="a">OK</span>
+<span class="c">→ PR #1 "Adapt to Paylite API v2"</span></pre></div>
+  </div>
+
+  <div class="gates">
+    <div class="lb">When Driftless stops instead of opening a PR</div>
+    <div class="g"><b>No affected calls</b><span>Change logged, nothing else happens.</span></div>
+    <div class="g"><b>No safe fix</b><span>A field you read was removed, or no migration default was given. Opens an issue with the reason.</span></div>
+    <div class="g"><b>Edit out of range</b><span>Patch touched lines outside the affected functions. Rejected.</span></div>
+    <div class="g"><b>Tests still fail</b><span>Patch is discarded. Opens an issue with the failing output.</span></div>
+    <div class="g"><b>Not subscribed</b><span>Change detected and shown, no action on the repo.</span></div>
   </div>
 </div></section>
 
