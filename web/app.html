@@ -114,6 +114,14 @@ pre.diff div{padding:0 14px}.ad{background:rgba(62,207,142,.12);color:#9ff0c9}.d
     <div class="lbl" style="margin-top:16px" data-ko="보낸 알림">Alerts sent</div>
     <ul class="out" id="outbox"></ul>
   </div>
+  <div class="card">
+    <div class="st"><span class="num" style="background:var(--blue)">AI</span><b data-ko="AI 어시스턴트에서 바로 쓰기 (MCP)">Use it from your AI assistant (MCP)</b></div>
+    <p class="p" data-ko="Claude 같은 AI가 Driftless에 직접 붙어서 묻고, 소스를 추가하고, PR 내용을 받아옵니다. 병합은 AI에게 열어 두지 않습니다.">AI assistants like Claude connect to Driftless directly: ask what changed, add sources, read PRs. Merging is never exposed to AI.</p>
+    <pre class="diff" style="border:1px solid var(--line);border-radius:8px;padding:10px 0"><div>claude mcp add driftless -- python3 ~/selfmaint/mcp_server.py</div></pre>
+    <div class="lbl" style="margin-top:14px" data-ko="이렇게 물어보세요">Try asking</div>
+    <ul class="out"><li data-ko="&quot;Paylite에서 이번에 뭐가 바뀌었고, 열린 PR 테스트 결과는?&quot;">"What changed in Paylite, and what do the open PR's tests say?"</li><li data-ko="&quot;이 학회 공식 페이지도 매시간 지켜봐 줘: https://...&quot;">"Watch this conference page every hour: https://..."</li><li data-ko="&quot;최근에 보낸 알림 중 실패한 채널 있어?&quot;">"Did any alert fail to send recently?"</li></ul>
+    <p style="font:12px 'Geist Mono',monospace;color:var(--dim);margin:8px 0 0">tools: driftless_status · list_sources · add_source · check_now · recent_changes · list_prs · list_alerts</p>
+  </div>
   <p class="foot"><span data-ko="내부 과정 전부 보기:">See every internal step:</span> <a href="/console.html" data-ko="콘솔">Console</a></p>
 </main>
 <script>

@@ -28,6 +28,14 @@ Python 3.10+, git, and the `claude` CLI for AI-written PRs (optional; falls back
 - `/app.html` — the user flow: repo + API → API changes → Claude writes the PR → verified → merge
 - `/console.html` — every internal step, and you can play the API provider
 
+## Use it from an AI assistant (MCP)
+
+```bash
+claude mcp add driftless -- python3 /path/to/selfmaint/mcp_server.py
+```
+
+Tools: `driftless_status`, `list_sources`, `add_source`, `check_now`, `recent_changes`, `list_prs`, `list_alerts`. Merging is not exposed. Verified: Claude answered "what changed in Paylite and what are the PR's test results" through these tools.
+
 ## What the self-test checks
 
 - Breaking changes (endpoints move to `/v2/payments`, `status` → `state`, new required `idempotency_key`) → PR opens with tests `FAILED` → `OK`, then merges.
