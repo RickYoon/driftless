@@ -80,7 +80,7 @@ pre.diff div{padding:0 14px}.ad{background:rgba(62,207,142,.12);color:#9ff0c9}.d
   <h1 data-ko="지켜볼 것을 고르면, 바뀔 때 알려 주고 코드까지 고칩니다">Pick what to watch. We alert you when it changes, and fix your code.</h1>
   <p class="lead" data-ko="① 소스를 고르고 ② 주기적으로 변화를 감지하고 ③ Slack·이메일·GitHub PR로 알립니다.">① pick a source, ② we check it on a schedule, ③ you get Slack, email, or a GitHub PR.</p>
 
-  <div class="card">
+  <div class="card" id="s1">
     <div class="st"><span class="num">1</span><b data-ko="소스 고르기: API 명세 또는 웹페이지">Pick sources: API spec or web page</b></div>
     <p class="p" data-ko="API 명세(JSON)는 엔드포인트 변화를, 웹페이지는 크롤링해서 글 변화를 봅니다.">API specs (JSON) are compared by endpoint. Web pages are crawled and compared by text.</p>
     <div id="sources"></div>
@@ -93,13 +93,13 @@ pre.diff div{padding:0 14px}.ad{background:rgba(62,207,142,.12);color:#9ff0c9}.d
     </div>
   </div>
 
-  <div class="card">
+  <div class="card" id="s2">
     <div class="st"><span class="num">2</span><b data-ko="변화 감지: 주기적으로 확인">Detect changes on a schedule</b></div>
     <p class="p" data-ko="첫 확인은 기준선으로 저장하고, 그다음부터 달라진 줄만 보고합니다. 빈 응답으로 기준선을 덮어쓰지 않습니다.">The first check becomes the baseline. After that, only changed lines are reported. An empty response never overwrites the baseline.</p>
     <ul class="log" id="log"></ul>
   </div>
 
-  <div class="card">
+  <div class="card" id="s3">
     <div class="st"><span class="num">3</span><b data-ko="바뀌면 알림: Slack · 이메일 · GitHub PR">When it changes: Slack · email · GitHub PR</b></div>
     <p class="p" data-ko="API 변화는 AI(Claude)가 코드를 고쳐 PR로, 페이지 변화는 Slack·이메일로 알립니다. 설정이 없는 채널은 '설정 안 됨'으로 기록만 남깁니다.">API changes become a PR written by AI (Claude). Page changes go to Slack and email. Unconfigured channels are logged as 'not configured'.</p>
     <div class="chan">
@@ -114,7 +114,7 @@ pre.diff div{padding:0 14px}.ad{background:rgba(62,207,142,.12);color:#9ff0c9}.d
     <div class="lbl" style="margin-top:16px" data-ko="보낸 알림">Alerts sent</div>
     <ul class="out" id="outbox"></ul>
   </div>
-  <div class="card">
+  <div class="card" id="s4">
     <div class="st"><span class="num" style="background:var(--blue)">AI</span><b data-ko="AI 어시스턴트에서 바로 쓰기 (MCP)">Use it from your AI assistant (MCP)</b></div>
     <p class="p" data-ko="Claude 같은 AI가 Driftless에 직접 붙어서 묻고, 소스를 추가하고, PR 내용을 받아옵니다. 병합은 AI에게 열어 두지 않습니다.">AI assistants like Claude connect to Driftless directly: ask what changed, add sources, read PRs. Merging is never exposed to AI.</p>
     <pre class="diff" style="border:1px solid var(--line);border-radius:8px;padding:10px 0"><div>claude mcp add driftless -- python3 ~/selfmaint/mcp_server.py</div></pre>
@@ -192,6 +192,7 @@ const KO=[...document.querySelectorAll("[data-ko]")];KO.forEach(e=>e.dataset.en=
 function setLang(l){L=l;KO.forEach(e=>e.innerHTML=l==="ko"?e.dataset.ko:e.dataset.en);document.documentElement.lang=l;$("#lang").textContent=l==="ko"?"English":"한국어";try{localStorage.setItem("dl-lang",l)}catch(_){}sig="";if(st)render()}
 $("#lang").onclick=()=>setLang(L==="ko"?"en":"ko");
 setLang(L);poll();setInterval(poll,800);
+{const f=new URLSearchParams(location.search).get("focus");if(f){const go=()=>{const el=document.getElementById(f);if(!el)return;let n=el;while(n&&n.parentElement&&n!==document.body){[...n.parentElement.children].forEach(c=>{if(c!==n&&c.tagName!=="SCRIPT"&&c.tagName!=="NAV")c.style.display="none"});n=n.parentElement}window.scrollTo(0,0)};go();setInterval(go,300)}}
 </script>
 </body>
 </html>

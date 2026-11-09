@@ -188,6 +188,7 @@ function setLang(l){els.forEach(e=>e.innerHTML=l==="ko"?e.dataset.ko:e.dataset.e
 let L="en";try{L=localStorage.getItem("dl-lang")||(navigator.language||"").startsWith("ko")&&"ko"||"en"}catch(_){}
 {const q=new URLSearchParams(location.search).get("lang");if(q==="ko"||q==="en")L=q;}
 setLang(L);document.getElementById("lang").onclick=()=>{L=L==="ko"?"en":"ko";setLang(L)};
+{const f=new URLSearchParams(location.search).get("focus");if(f){const go=()=>{const el=document.getElementById(f);if(!el)return;let n=el;while(n&&n.parentElement&&n!==document.body){[...n.parentElement.children].forEach(c=>{if(c!==n&&c.tagName!=="SCRIPT"&&c.tagName!=="NAV")c.style.display="none"});n=n.parentElement}window.scrollTo(0,0)};go();setInterval(go,300)}}
 </script>
 </body>
 </html>
