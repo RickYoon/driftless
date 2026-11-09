@@ -11,163 +11,179 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.6 Geist,"Apple SD Gothic Neo",-apple-system,sans-serif;-webkit-font-smoothing:antialiased;word-break:keep-all}
 a{color:inherit;text-decoration:none}
-nav{display:flex;align-items:center;gap:12px;height:58px;padding:0 20px;border-bottom:1px solid var(--line)}
+nav{display:flex;align-items:center;gap:12px;height:58px;padding:0 20px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#000;z-index:5}
 .logo{display:flex;align-items:center;gap:9px;font-weight:700;font-size:16px}.logo svg{width:22px;height:22px}
 .sp{flex:1}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:8px;padding:9px 16px;font:inherit;font-size:14px;font-weight:600;border:1px solid var(--line);background:transparent;color:var(--fg);cursor:pointer;transition:.15s}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:8px;padding:8px 14px;font:inherit;font-size:13.5px;font-weight:600;border:1px solid var(--line);background:transparent;color:var(--fg);cursor:pointer;transition:.15s;white-space:nowrap}
 .btn:hover{background:#1a1a1a}.btn.w{background:#fff;color:#000;border-color:#fff}.btn.w:hover{background:#ddd}
-.btn.g{background:var(--ok);color:#000;border-color:var(--ok)}
-.btn:disabled{opacity:.35;cursor:not-allowed}
-.small{padding:6px 12px;font-size:13px}
-main{max-width:760px;margin:0 auto;padding:30px 18px 90px}
-h1{font-size:28px;letter-spacing:-.02em;margin:0 0 6px}.lead{color:var(--mut);margin:0 0 26px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:16px;transition:.2s}
-.card.off{opacity:.45}
-.st{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.num{width:26px;height:26px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-weight:700;font-size:13px;flex:none}
-.card.done .num{background:var(--ok);border-color:var(--ok);color:#000}
-.st b{font-size:16px}
-label.f{display:block;font-size:12.5px;color:var(--mut);margin:10px 0 6px}
-input,select{width:100%;background:#050505;color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:11px 12px;font:14px "Geist Mono",monospace}
+.btn.g{background:var(--ok);color:#000;border-color:var(--ok)}.btn:disabled{opacity:.35;cursor:not-allowed}
+.small{padding:5px 10px;font-size:12.5px}
+main{max-width:860px;margin:0 auto;padding:28px 18px 90px}
+h1{font-size:26px;letter-spacing:-.02em;margin:0 0 6px}.lead{color:var(--mut);margin:0 0 24px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:16px}
+.st{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.num{width:26px;height:26px;border-radius:50%;background:var(--ok);color:#000;display:grid;place-items:center;font-weight:800;font-size:13px;flex:none}
+.st b{font-size:17px}.p{color:var(--mut);margin:0 0 14px;font-size:14px}
+.src{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px}
+.srch{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.type{font:600 11px "Geist Mono",monospace;border-radius:999px;padding:2px 8px}
+.type.api{background:rgba(82,168,255,.14);color:var(--blue)}.type.page{background:rgba(167,139,250,.16);color:var(--purple)}
+.url{font:12.5px "Geist Mono",monospace;color:var(--dim);word-break:break-all;margin-top:3px}
+.meta{font:12.5px "Geist Mono",monospace;color:var(--mut);margin-top:6px}
+.meta .chg{color:var(--amber)}.meta .ok{color:var(--ok)}.meta .bad{color:var(--bad)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
+input,select{background:#050505;color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font:13px "Geist Mono",monospace;min-width:0}
 input:focus,select:focus{outline:none;border-color:#666}
-.hint{font-size:12.5px;color:var(--dim);margin-top:6px}
-.watch{display:flex;align-items:center;gap:10px;font:14px "Geist Mono",monospace;flex-wrap:wrap}
-.dot{width:9px;height:9px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 rgba(62,207,142,.6);animation:pulse 1.8s infinite}
-@keyframes pulse{70%{box-shadow:0 0 0 9px rgba(62,207,142,0)}100%{box-shadow:0 0 0 0 rgba(62,207,142,0)}}
-.p{color:var(--mut);margin:0 0 14px}
-.chg{list-style:none;margin:12px 0 0;padding:0;font:13px "Geist Mono",monospace}
-.chg li{padding:6px 10px;border:1px solid #1f1f1f;border-radius:6px;margin-bottom:6px;color:var(--fg)}.chg li::before{content:"● ";color:var(--amber)}
-.steps{list-style:none;margin:0;padding:0}
-.steps li{display:flex;gap:10px;align-items:center;padding:7px 0;color:var(--dim)}
-.steps li i{width:18px;height:18px;border-radius:50%;border:1.5px solid #444;flex:none;display:grid;place-items:center;font-style:normal;font-size:11px}
+.grow{flex:1}
+.add{border:1px dashed var(--line);border-radius:10px;padding:12px 14px}
+.lbl{font:500 11px "Geist Mono",monospace;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.log{list-style:none;margin:10px 0 0;padding:0;max-height:300px;overflow:auto;border-top:1px solid #1c1c1c}
+.log li{padding:7px 0;border-bottom:1px solid #141414;font-size:13.5px}
+.log .t{font:11.5px "Geist Mono",monospace;color:var(--dim);margin-right:8px}.log .k{font:600 11px "Geist Mono",monospace;margin-right:6px;text-transform:uppercase}
+.log ul{margin:3px 0 0;padding-left:16px;font:12px "Geist Mono",monospace;color:var(--mut)}
+.chan{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.ch{border:1px solid var(--line);border-radius:10px;padding:12px}
+.ch b{display:flex;align-items:center;gap:8px}.ch .s{font:11.5px "Geist Mono",monospace;border-radius:999px;padding:1px 8px;margin-left:auto}
+.s.on{background:rgba(62,207,142,.14);color:var(--ok)}.s.off{background:#1a1a1a;color:var(--dim)}
+.ch input{width:100%;margin-top:7px}.ch p{font-size:12px;color:var(--dim);margin:6px 0 0}
+.out{list-style:none;margin:12px 0 0;padding:0}
+.out li{border:1px solid #1c1c1c;border-radius:8px;padding:8px 10px;margin-bottom:6px;font-size:13.5px}
+.out .cs{font:11.5px "Geist Mono",monospace;color:var(--dim);margin-top:3px}.cs .sent{color:var(--ok)}.cs .fail{color:var(--bad)}
+.steps{list-style:none;margin:10px 0 0;padding:0}
+.steps li{display:flex;gap:10px;align-items:center;padding:5px 0;color:var(--dim);font-size:14px}
+.steps li i{width:17px;height:17px;border-radius:50%;border:1.5px solid #444;flex:none;display:grid;place-items:center;font-style:normal;font-size:10px}
 .steps li.ok{color:var(--fg)}.steps li.ok i{background:var(--ok);border-color:var(--ok);color:#000}
 .steps li.now{color:var(--fg)}.steps li.now i{border-color:#fff;border-top-color:transparent;animation:sp 1s linear infinite}
-.steps li.bad{color:var(--amber)}.steps li.bad i{border-color:var(--amber);color:var(--amber)}
 .steps small{color:var(--dim);margin-left:auto;font:12px "Geist Mono",monospace}
 @keyframes sp{to{transform:rotate(360deg)}}
-.pr{border:1px solid var(--line);border-radius:12px;margin-top:16px;overflow:hidden}
+.pr{border:1px solid var(--line);border-radius:12px;margin-top:14px;overflow:hidden}
 .prh{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line);flex-wrap:wrap}
 .tag{font:600 11.5px "Geist Mono",monospace;border-radius:999px;padding:2px 9px}
-.tag.open{background:rgba(62,207,142,.14);color:var(--ok)}.tag.merged{background:rgba(167,139,250,.16);color:var(--purple)}
-.tag.ai{background:rgba(82,168,255,.14);color:var(--blue)}.tag.rules{background:#1a1a1a;color:var(--mut)}
-.prt{font-weight:700;font-size:15px;width:100%;margin-top:2px}
-.body{padding:14px 16px;font-size:14px;color:#d6d6d6;min-height:40px}
-.body ul{margin:6px 0;padding-left:18px}.body p{margin:6px 0}.body code{font:12.5px "Geist Mono",monospace;background:#151515;padding:1px 5px;border-radius:4px}
+.tag.open{background:rgba(62,207,142,.14);color:var(--ok)}.tag.merged{background:rgba(167,139,250,.16);color:var(--purple)}.tag.ai{background:rgba(82,168,255,.14);color:var(--blue)}.tag.rules{background:#1a1a1a;color:var(--mut)}
+.prt{font-weight:700;width:100%}
+.body{padding:12px 16px;font-size:14px;color:#d6d6d6}.body ul{margin:6px 0;padding-left:18px}.body p{margin:6px 0}.body code{font:12.5px "Geist Mono",monospace;background:#151515;padding:1px 5px;border-radius:4px}
 .cursor::after{content:"▍";color:var(--blue);animation:bl 1s steps(1) infinite}@keyframes bl{50%{opacity:0}}
-.checks{display:flex;gap:8px;padding:0 16px 12px;flex-wrap:wrap;font:12.5px "Geist Mono",monospace}
-.checks span{border:1px solid var(--line);border-radius:6px;padding:3px 9px}.red{color:var(--bad)}.green{color:var(--ok)}
-details{border-top:1px solid var(--line)}details summary{cursor:pointer;padding:10px 16px;color:var(--mut);font-size:13px}
+.checks{display:flex;gap:8px;padding:0 16px 12px;flex-wrap:wrap;font:12.5px "Geist Mono",monospace}.checks span{border:1px solid var(--line);border-radius:6px;padding:3px 9px}.red{color:var(--bad)}.green{color:var(--ok)}
+details{border-top:1px solid var(--line)}details summary{cursor:pointer;padding:9px 16px;color:var(--mut);font-size:13px}
 pre.diff{margin:0;font:12px/1.6 "Geist Mono",monospace;white-space:pre;overflow:auto;background:#050505;padding:8px 0;border-top:1px solid var(--line)}
-pre.diff div{padding:0 14px}.add{background:rgba(62,207,142,.12);color:#9ff0c9}.del{background:rgba(255,97,102,.12);color:#ffb3b5}.hunk{color:var(--blue)}
-.act{padding:12px 16px;border-top:1px solid var(--line);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.merged{color:var(--purple);font-size:14px}
-.issue{border:1px solid rgba(245,165,36,.5);border-radius:12px;margin-top:16px;padding:14px 16px}.issue b{color:var(--amber)}.issue ul{margin:6px 0 0;padding-left:18px;color:var(--mut);font-size:13.5px}
-.foot{color:var(--dim);font-size:12.5px;text-align:center;margin-top:24px}.foot a{text-decoration:underline}
+pre.diff div{padding:0 14px}.ad{background:rgba(62,207,142,.12);color:#9ff0c9}.de{background:rgba(255,97,102,.12);color:#ffb3b5}.hk{color:var(--blue)}
+.act{padding:11px 16px;border-top:1px solid var(--line);display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13.5px}
+.issue{border:1px solid rgba(245,165,36,.5);border-radius:12px;margin-top:14px;padding:12px 14px}.issue b{color:var(--amber)}.issue ul{margin:6px 0 0;padding-left:18px;color:var(--mut);font-size:13.5px}
+.foot{color:var(--dim);font-size:12.5px;text-align:center;margin-top:20px}.foot a{text-decoration:underline}
+@media(max-width:760px){.chan{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <nav><a class="logo" href="/"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="1" y="1" width="22" height="22" rx="7" fill="#3ecf8e"/><path d="M5.5 14.5c2-3 4-3 6 0s4 3 6 0" stroke="#000" stroke-width="2.2" stroke-linecap="round"/><path d="M5.5 9.5h13" stroke="#000" stroke-width="2.2" stroke-linecap="round" opacity=".35"/></svg>Driftless</a>
 <span class="sp"></span><button class="btn small" id="lang">한국어</button><button class="btn small" id="reset" data-ko="처음부터">Start over</button></nav>
 <main>
-  <h1 data-ko="API가 바뀌면, AI가 내 코드를 고쳐 PR로 보냅니다">When an API changes, AI fixes your code and sends a PR</h1>
-  <p class="lead" data-ko="할 일은 두 가지뿐입니다. 저장소 주소와 쓰는 API를 알려 주세요.">You only do two things: tell us your repo and the API it calls.</p>
+  <h1 data-ko="지켜볼 것을 고르면, 바뀔 때 알려 주고 코드까지 고칩니다">Pick what to watch. We alert you when it changes, and fix your code.</h1>
+  <p class="lead" data-ko="① 소스를 고르고 ② 주기적으로 변화를 감지하고 ③ Slack·이메일·GitHub PR로 알립니다.">① pick a source, ② we check it on a schedule, ③ you get Slack, email, or a GitHub PR.</p>
 
-  <div class="card" id="c1">
-    <div class="st"><span class="num">1</span><b data-ko="저장소와 API 알려 주기">Tell us your repo and API</b></div>
-    <div id="form">
-      <label class="f" data-ko="GitHub 저장소 주소">GitHub repository</label>
-      <input id="repo" value="github.com/acme/acme-shop" spellcheck="false">
-      <label class="f" data-ko="코드가 호출하는 API">API your code calls</label>
-      <select id="api"><option>Paylite API</option></select>
-      <div class="hint" data-ko="데모에서는 실제 GitHub에 연결하지 않습니다. 이 컴퓨터의 예시 저장소와 가상 결제 API(Paylite)로 동작합니다.">This demo does not connect to real GitHub. It uses a local sample repo and a fictional payments API (Paylite).</div>
-      <div style="margin-top:14px"><button class="btn w" id="go" data-ko="지켜보기 시작">Start watching</button></div>
+  <div class="card">
+    <div class="st"><span class="num">1</span><b data-ko="소스 고르기: API 명세 또는 웹페이지">Pick sources: API spec or web page</b></div>
+    <p class="p" data-ko="API 명세(JSON)는 엔드포인트 변화를, 웹페이지는 크롤링해서 글 변화를 봅니다.">API specs (JSON) are compared by endpoint. Web pages are crawled and compared by text.</p>
+    <div id="sources"></div>
+    <div class="add"><div class="lbl" data-ko="소스 추가">Add a source</div>
+      <div class="row" style="margin-top:0"><select id="ntype"><option value="page" data-ko="웹페이지 크롤링">Web page (crawl)</option><option value="api" data-ko="API 명세 (OpenAPI JSON)">API spec (OpenAPI JSON)</option></select>
+      <input id="nurl" class="grow" placeholder="https://..." spellcheck="false"><input id="niv" type="number" value="60" min="10" style="width:84px" title="seconds"><span style="color:var(--dim);font-size:12.5px" data-ko="초마다">sec</span>
+      <button class="btn w" id="nadd" data-ko="추가">Add</button></div>
+      <div id="nerr" style="color:var(--bad);font-size:12.5px;margin-top:6px"></div>
+      <p style="font-size:12px;color:var(--dim);margin:6px 0 0" data-ko="외부 사이트는 최소 60초 간격, 한 번에 하나씩 순서대로 확인합니다.">External sites are checked at most once per 60s, one at a time.</p>
     </div>
-    <div id="watching" style="display:none" class="watch"><span class="dot"></span><span id="wtxt"></span></div>
   </div>
 
-  <div class="card off" id="c2">
-    <div class="st"><span class="num">2</span><b data-ko="API가 바뀌면">When the API changes</b></div>
-    <p class="p" data-ko="평소에는 할 일이 없습니다. Paylite가 API를 바꾸는 순간 Driftless가 움직입니다. 데모에서는 아래 버튼이 'Paylite가 API를 바꾸는 순간'입니다.">Nothing to do day to day. The moment Paylite changes its API, Driftless moves. In this demo, the button below is that moment.</p>
-    <button class="btn g" id="change" disabled data-ko="▶ 데모: Paylite가 API를 바꿨다">▶ Demo: Paylite changes its API</button>
-    <ul class="chg" id="chg"></ul>
+  <div class="card">
+    <div class="st"><span class="num">2</span><b data-ko="변화 감지: 주기적으로 확인">Detect changes on a schedule</b></div>
+    <p class="p" data-ko="첫 확인은 기준선으로 저장하고, 그다음부터 달라진 줄만 보고합니다. 빈 응답으로 기준선을 덮어쓰지 않습니다.">The first check becomes the baseline. After that, only changed lines are reported. An empty response never overwrites the baseline.</p>
+    <ul class="log" id="log"></ul>
   </div>
 
-  <div class="card off" id="c3">
-    <div class="st"><span class="num">3</span><b data-ko="AI가 PR을 만듭니다">AI opens the PR</b></div>
+  <div class="card">
+    <div class="st"><span class="num">3</span><b data-ko="바뀌면 알림: Slack · 이메일 · GitHub PR">When it changes: Slack · email · GitHub PR</b></div>
+    <p class="p" data-ko="API 변화는 AI(Claude)가 코드를 고쳐 PR로, 페이지 변화는 Slack·이메일로 알립니다. 설정이 없는 채널은 '설정 안 됨'으로 기록만 남깁니다.">API changes become a PR written by AI (Claude). Page changes go to Slack and email. Unconfigured channels are logged as 'not configured'.</p>
+    <div class="chan">
+      <div class="ch"><b>Slack <span class="s off" id="sslack"></span></b><input id="cslack" placeholder="https://hooks.slack.com/services/..." spellcheck="false"><p data-ko="Incoming Webhook URL">Incoming Webhook URL</p></div>
+      <div class="ch"><b><span data-ko="이메일">Email</span> <span class="s off" id="semail"></span></b><input id="cto" placeholder="you@company.com"><input id="chost" placeholder="smtp.gmail.com"><input id="cuser" placeholder="SMTP user"><input id="cpass" type="password" placeholder="SMTP app password"><p data-ko="SMTP 587 (STARTTLS)">SMTP 587 (STARTTLS)</p></div>
+      <div class="ch"><b>GitHub PR <span class="s off" id="sgh"></span></b><input id="cgh" placeholder="owner/repo" spellcheck="false"><p data-ko="비워 두면 로컬 데모 저장소에만 PR(브랜치)을 만듭니다.">Leave empty to open the PR (branch) in the local demo repo only.</p></div>
+    </div>
+    <div class="row"><button class="btn w" id="csave" data-ko="채널 저장">Save channels</button><button class="btn" id="ctest" data-ko="테스트 알림 보내기">Send test alert</button><span id="cmsg" style="color:var(--dim);font-size:12.5px"></span></div>
+    <div class="lbl" style="margin-top:16px" data-ko="Paylite API → 코드 수정 PR">Paylite API → code-fix PR</div>
     <ul class="steps" id="steps"></ul>
-    <div id="out"></div>
+    <div id="prout"></div>
+    <div class="lbl" style="margin-top:16px" data-ko="보낸 알림">Alerts sent</div>
+    <ul class="out" id="outbox"></ul>
   </div>
-  <p class="foot"><span data-ko="내부 과정을 전부 보고 싶다면">Want to see every internal step?</span> <a href="/console.html" data-ko="콘솔 보기">Open console</a></p>
+  <p class="foot"><span data-ko="내부 과정 전부 보기:">See every internal step:</span> <a href="/console.html" data-ko="콘솔">Console</a></p>
 </main>
 <script>
 const $=s=>document.querySelector(s);
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 let L="en";try{L=localStorage.getItem("dl-lang")||((navigator.language||"").startsWith("ko")?"ko":"en")}catch(_){}
 {const q=new URLSearchParams(location.search).get("lang");if(q==="ko"||q==="en")L=q;}
 const t=(en,ko)=>L==="ko"?ko:en;
-let st=null,typed={},sig="";
+let st=null,sig="",typed={},cfgFilled=false;
 async function api(p,b){const r=await fetch(p,b?{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)}:undefined);const j=await r.json();if(!r.ok)throw new Error(j.error||r.status);return j}
-const ITEM=[[/ · breaking$/,""],[/new required request field/,"새 필수 요청 필드"],[/request field/,"요청 필드"],[/response field/,"응답 필드"],[/'(\w+)' removed/,"'$1' 삭제"]];
-const tr=s=>L==="ko"?ITEM.reduce((a,[r,x])=>a.replace(r,x),s):s.replace(/ · breaking$/,"");
 function md(s){return esc(s).split("\n").map(l=>{l=l.replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/`([^`]+)`/g,"<code>$1</code>");return /^\s*[-*] /.test(l)?"<li>"+l.replace(/^\s*[-*] /,"")+"</li>":(l.trim()?"<p>"+l+"</p>":"")}).join("").replace(/(<li>.*?<\/li>)+/g,m=>"<ul>"+m+"</ul>")}
-function diffHtml(d){return d.split("\n").map(l=>{const c=l.startsWith("+++")||l.startsWith("---")?"":l.startsWith("@@")?"hunk":l.startsWith("+")?"add":l.startsWith("-")?"del":"";return `<div class="${c}">${esc(l)||" "}</div>`}).join("")}
-
+function diffHtml(d){return d.split("\n").map(l=>{const c=l.startsWith("+++")||l.startsWith("---")?"":l.startsWith("@@")?"hk":l.startsWith("+")?"ad":l.startsWith("-")?"de":"";return `<div class="${c}">${esc(l)||" "}</div>`}).join("")}
+const KCOL={source:"var(--amber)",notify:"var(--ok)",pr:"var(--ok)",issue:"var(--amber)",warn:"var(--amber)",error:"var(--bad)",hook:"var(--blue)",ai:"var(--blue)",test:"var(--amber)",diff:"var(--fg)",scan:"var(--purple)",patch:"var(--blue)",merge:"var(--purple)",info:"var(--dim)"};
+function statusCls(s){return /changed/.test(s)?"chg":/fail|empty/.test(s)?"bad":/baseline|no change|watching/.test(s)?"ok":""}
+function trStatus(s){if(L!=="ko")return s;return s.replace(/^baseline saved \((\d+) lines\)$/,"기준선 저장 ($1줄)").replace(/^baseline saved \((\d+) operations\)$/,"기준선 저장 (엔드포인트 $1개)").replace(/^no change$/,"변화 없음").replace(/^changed$/,"변화 감지").replace(/^watching$/,"웹훅으로 지켜보는 중").replace(/^new$/,"아직 확인 전").replace(/^fetch failed: /,"가져오기 실패: ").replace(/^empty response, snapshot kept$/,"빈 응답 — 기준선 유지")}
 function render(){
-  const c=st.connected;
-  $("#form").style.display=c?"none":"block";$("#watching").style.display=c?"flex":"none";
-  $("#wtxt").textContent=c?t(`${st.repo} (demo sample repo, local) · watching ${st.api} · code matches API v${st.main_version}`,`${st.repo} (데모용 예시 저장소, 로컬) · ${st.api} 지켜보는 중 · 코드가 API v${st.main_version}에 맞춰져 있음`):"";
-  $("#c1").classList.toggle("done",c);
-  $("#c2").classList.toggle("off",!c);
-  $("#change").disabled=!c||st.busy||st.prs.some(p=>p.state==="open");
-  // events since last hook
-  const ev=st.events;let h=-1;ev.forEach((e,i)=>{if(e.kind==="hook")h=i});
-  const run=h>=0?ev.slice(h):[];
-  const diff=run.find(e=>e.kind==="diff");
-  $("#chg").innerHTML=diff?diff.items.map(i=>`<li>${esc(tr(i))}</li>`).join(""):"";
-  $("#c2").classList.toggle("done",!!diff);
-  $("#c3").classList.toggle("off",h<0);
-  const has=k=>run.some(e=>e.kind===k);
-  const tests=run.filter(e=>e.kind==="test");
-  const aiDone=run.some(e=>e.kind==="ai"&&/wrote/.test(e.msg));const aiWarn=run.some(e=>e.kind==="warn");
-  const issue=has("issue");
-  const S=[
-    [t("Change detected","변경 감지"),has("diff")],
-    [t("Find the code that uses it","영향받는 코드 찾기"),has("scan")],
-    [t("AI writes the fix and the PR","AI가 수정 코드와 PR 작성"),aiDone||aiWarn,aiWarn?t("fallback: rules","대체: 규칙 기반"):(aiDone?"Claude":"")],
-    [t("Verify with your tests (red → green)","내 테스트로 검증 (빨강 → 초록)"),tests.length>=2],
-    [t("Open the PR","PR 생성"),has("pr")]];
-  let firstOpen=S.findIndex(x=>!x[1]);
-  $("#steps").innerHTML=h<0?"":S.map((x,i)=>{let cls=x[1]?"ok":"";if(!x[1]&&i===firstOpen&&st.busy)cls="now";if(!x[1]&&issue&&i===firstOpen)cls="bad";return `<li class="${cls}"><i>${cls==="ok"?"✓":cls==="bad"?"!":""}</i>${esc(x[0])}${x[2]?`<small>${esc(x[2])}</small>`:""}</li>`}).join("");
-  $("#c3").classList.toggle("done",has("pr"));
-  // output
-  const pr=st.prs.length?st.prs[st.prs.length-1]:null, iss=st.issues.length?st.issues[st.issues.length-1]:null;
-  let html="";
-  if(issue&&iss){html=`<div class="issue"><b>${t("No PR — a human decision is needed","PR 없음 — 사람의 결정이 필요합니다")}</b><ul>${iss.items.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`}
-  else if(pr&&has("pr")||pr&&pr.state==="merged"&&h<0){
-    html=`<div class="pr"><div class="prh"><span class="tag ${pr.state}">${pr.state==="open"?t("Open","열림"):t("Merged","병합됨")}</span><span class="tag ${pr.engine==="claude"?"ai":"rules"}">${pr.engine==="claude"?t("✨ Written by Claude","✨ Claude가 작성"):t("Rule-based","규칙 기반")}</span><span style="color:var(--dim);font:12px 'Geist Mono',monospace">#${pr.id} · ${esc(pr.branch)}</span><div class="prt">${esc(pr.title)}</div></div>
-    <div class="body" id="prbody"></div>
-    <div class="checks"><span>${t("before","수정 전")} <b class="red">${esc(pr.before)}</b></span><span>${t("after","수정 후")} <b class="green">${esc(pr.after)}</b></span></div>
+  // sources
+  $("#sources").innerHTML=st.sources.map(s=>{
+    const isPay=s.id==="paylite",isLog=s.id==="changelog";
+    return `<div class="src"><div class="srch"><span class="type ${s.type}">${s.type==="api"?t("API spec","API 명세"):t("Web page","웹페이지")}</span><b>${esc(s.name)}</b><span class="sp"></span>
+      ${s.interval>0?`<span style="font:12px 'Geist Mono',monospace;color:var(--dim)">${t("every","")} ${s.interval}s${t("","마다")}</span><button class="btn small" onclick="checkNow('${s.id}')">${t("Check now","지금 확인")}</button>`:`<span style="font:12px 'Geist Mono',monospace;color:var(--dim)">${t("webhook","웹훅")}</span>`}</div>
+      <div class="url">${esc(s.url)}</div>
+      <div class="meta">${s.last_check?`${t("last check","마지막 확인")} ${s.last_check} · `:""}<span class="${statusCls(s.status)}">${esc(trStatus(s.status))}</span></div>
+      ${isPay?`<div class="meta">${t("Connected repo: acme-shop (local demo repo) · code matches API v","연결된 저장소: acme-shop (로컬 데모 저장소) · 코드가 API v")}${st.main_version}${t(""," 기준")}</div><div class="row"><button class="btn g small" id="paychange" ${st.busy||st.prs.some(p=>p.state==="open")?"disabled":""} onclick="payChange()">${t("▶ Demo: Paylite changes its API","▶ 데모: Paylite가 API를 바꿨다")}</button></div>`:""}
+      ${isLog?`<div class="row"><input id="logline" class="grow" value="${esc(t("2026-11-09 · v2: /v1/charges moved to /v2/payments","2026-11-09 · v2: /v1/charges가 /v2/payments로 이동"))}"><button class="btn small" onclick="addLine()">${t("Edit page (demo)","페이지 수정 (데모)")}</button></div>`:""}
+    </div>`}).join("");
+  // log
+  const ev=st.events.slice(-25).reverse();
+  $("#log").innerHTML=ev.map(e=>`<li><span class="t">${e.t}</span><span class="k" style="color:${KCOL[e.kind]||"var(--dim)"}">${e.kind}</span>${esc(e.msg)}${e.items&&e.items.length?`<ul>${e.items.map(i=>`<li>${esc(i)}</li>`).join("")}</ul>`:""}</li>`).join("");
+  // channels
+  const c=st.config;
+  const tag=(el,on,txt)=>{el.className="s "+(on?"on":"off");el.textContent=on?(txt||t("on","설정됨")):t("not set","설정 안 됨")};
+  tag($("#sslack"),c.slack);tag($("#semail"),c.email);tag($("#sgh"),!!c.github_repo,c.github_repo);
+  if(!cfgFilled){cfgFilled=true;$("#cto").value=c.email_to||"";$("#cgh").value=c.github_repo||""}
+  // pipeline steps
+  let h=-1;st.events.forEach((e,i)=>{if(e.kind==="hook")h=i});const run=h>=0?st.events.slice(h):[];
+  const has=k=>run.some(e=>e.kind===k);const aiDone=run.some(e=>e.kind==="ai"&&/wrote/.test(e.msg)),aiWarn=run.some(e=>e.kind==="warn"&&/AI/.test(e.msg));
+  const S=[[t("Change detected (webhook)","변경 감지 (웹훅)"),has("diff")],[t("Find the code that uses it","영향받는 코드 찾기"),has("scan")],[t("AI writes the fix and the PR","AI가 수정 코드와 PR 작성"),aiDone||aiWarn,aiWarn?t("fallback: rules","대체: 규칙"):aiDone?"Claude":""],[t("Verify with tests (red → green)","테스트로 검증 (빨강 → 초록)"),run.filter(e=>e.kind==="test").length>=2],[t("Open the PR and alert","PR 생성 · 알림"),has("pr")]];
+  const fo=S.findIndex(x=>!x[1]);
+  $("#steps").innerHTML=h<0?`<li>${t("Press the Paylite demo button in step 1.","1단계의 Paylite 데모 버튼을 눌러 보세요.")}</li>`:S.map((x,i)=>{const cls=x[1]?"ok":(i===fo&&st.busy?"now":"");return `<li class="${cls}"><i>${cls==="ok"?"✓":""}</i>${esc(x[0])}${x[2]?`<small>${esc(x[2])}</small>`:""}</li>`}).join("");
+  const pr=st.prs.length?st.prs[st.prs.length-1]:null,iss=st.issues.length?st.issues[st.issues.length-1]:null;
+  let o="";
+  if(has("issue")&&iss)o=`<div class="issue"><b>${t("No PR — a human decision is needed","PR 없음 — 사람의 결정이 필요합니다")}</b><ul>${iss.items.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`;
+  else if(pr)o=`<div class="pr"><div class="prh"><span class="tag ${pr.state==="open"?"open":"merged"}">${pr.state==="open"?t("Open","열림"):t("Merged","병합됨")}</span><span class="tag ${pr.engine==="claude"?"ai":"rules"}">${pr.engine==="claude"?t("✨ Written by Claude","✨ Claude가 작성"):t("Rule-based","규칙 기반")}</span><span style="color:var(--dim);font:12px 'Geist Mono',monospace">#${pr.id} · ${esc(pr.branch)}</span><div class="prt">${esc(pr.title)}</div></div>
+    <div class="body" id="prbody"></div><div class="checks"><span>${t("before","수정 전")} <b class="red">${esc(pr.before)}</b></span><span>${t("after","수정 후")} <b class="green">${esc(pr.after)}</b></span>${pr.github&&pr.github!=="not configured"?`<span>GitHub: ${esc(pr.github)}</span>`:""}</div>
     <details><summary>${t("Code changes","코드 변경")} · shop_client.py</summary><pre class="diff">${diffHtml(pr.diff)}</pre></details>
-    <div class="act">${pr.state==="open"?`<button class="btn w" onclick="merge(${pr.id})">${t("Merge pull request","PR 병합")}</button><span style="color:var(--dim);font-size:13px">${t("Only you can merge.","병합은 나만 할 수 있습니다.")}</span>`:`<span class="merged">✓ ${t(`Merged. Your repo now works with Paylite v${st.main_version}.`,`병합 완료. 이제 저장소가 Paylite v${st.main_version} 기준입니다.`)}</span>`}</div></div>`;
-  }
-  $("#out").innerHTML=html;
-  if(pr&&$("#prbody")){const body=pr.body||t("Updated the client for the new Paylite API. Verified by your test suite.","새 Paylite API에 맞게 클라이언트를 수정했습니다. 테스트로 검증했습니다.");
-    if(typed[pr.id]){$("#prbody").innerHTML=md(body)}else{typed[pr.id]=true;typeOut($("#prbody"),body)}}
+    <div class="act">${pr.state==="open"?`<button class="btn w" onclick="merge(${pr.id})">${t("Merge pull request","PR 병합")}</button><span style="color:var(--dim)">${t("Only you can merge.","병합은 나만 할 수 있습니다.")}</span>`:`<span style="color:var(--purple)">✓ ${t("Merged. Code now matches Paylite v","병합 완료. 코드가 이제 Paylite v")}${st.main_version}${t("."," 기준입니다.")}</span>`}</div></div>`;
+  $("#prout").innerHTML=o;
+  if(pr&&$("#prbody")){const body=pr.body||t("Updated the client for the new Paylite API.","새 Paylite API에 맞게 수정했습니다.");if(typed[pr.id])$("#prbody").innerHTML=md(body);else{typed[pr.id]=1;typeOut(body)}}
+  // outbox
+  $("#outbox").innerHTML=st.outbox.slice().reverse().map(r=>`<li><b>${esc(r.title)}</b><div class="cs">${Object.entries(r.channels).map(([k,v])=>`<span class="${v==="sent"?"sent":/fail/.test(v)?"fail":""}">${k}: ${esc(L==="ko"?v.replace("not configured","설정 안 됨").replace("sent","보냄"):v)}</span>`).join(" · ")}</div></li>`).join("")||`<li style="color:var(--dim)">${t("Nothing sent yet.","아직 보낸 알림이 없습니다.")}</li>`;
 }
-function typeOut(el,text){let i=0;el.classList.add("cursor");const step=()=>{const e=document.getElementById("prbody");if(!e)return;i=Math.min(text.length,i+4);e.innerHTML=md(text.slice(0,i));if(i<text.length)setTimeout(step,12);else e.classList.remove("cursor")};step()}
-async function poll(){
-  try{st=await api("/api/state")}catch(e){return}
-  const s=JSON.stringify([st.connected,st.busy,st.events.length,st.prs.map(p=>p.state),st.issues.length,L]);
-  if(s!==sig){sig=s;render()}
-}
-$("#go").onclick=async()=>{await api("/api/connect",{repo:$("#repo").value,api:$("#api").value,lang:L});poll()};
-$("#change").onclick=async()=>{$("#change").disabled=true;try{await api("/api/demo-change",{lang:L})}catch(e){}poll()};
+function typeOut(text){let i=0;const step=()=>{const e=document.getElementById("prbody");if(!e)return;e.classList.add("cursor");i=Math.min(text.length,i+4);e.innerHTML=md(text.slice(0,i));if(i<text.length)setTimeout(step,12);else e.classList.remove("cursor")};step()}
+async function poll(){try{st=await api("/api/state")}catch(e){return}
+  const s=JSON.stringify([st.busy,st.events.length,st.prs.map(p=>p.state),st.issues.length,st.outbox.length,st.sources.map(x=>x.status+x.last_check),st.config,L]);
+  if(s!==sig){sig=s;const a=document.activeElement;const keep=a&&a.id==="logline"?a.value:null;render();if(keep!==null){const e=$("#logline");e.value=keep;e.focus()}}}
+async function checkNow(id){await api("/api/check",{id});setTimeout(poll,1200)}
+async function payChange(){await api("/api/demo-change",{lang:L});poll()}
+async function addLine(){const v=$("#logline").value;await api("/api/demo-page",{line:v});await api("/api/check",{id:"changelog"});setTimeout(poll,1200)}
 async function merge(id){await api("/api/merge",{id});poll()}
+$("#nadd").onclick=async()=>{$("#nerr").textContent="";try{await api("/api/sources",{type:$("#ntype").value,url:$("#nurl").value,interval:+$("#niv").value});$("#nurl").value="";poll()}catch(e){$("#nerr").textContent=e.message}};
+$("#csave").onclick=async()=>{const b={slack_webhook:$("#cslack").value,email_to:$("#cto").value,smtp_host:$("#chost").value,smtp_user:$("#cuser").value,smtp_pass:$("#cpass").value,github_repo:$("#cgh").value};
+  for(const k of ["slack_webhook","smtp_host","smtp_user","smtp_pass"])if(!b[k])delete b[k];
+  await api("/api/config",b);$("#cslack").value="";$("#cpass").value="";$("#cmsg").textContent=t("Saved.","저장했습니다.");poll()};
+$("#ctest").onclick=async()=>{const r=await api("/api/test-alert",{});$("#cmsg").textContent=Object.entries(r.channels).map(([k,v])=>k+": "+v).join(" · ");poll()};
 $("#reset").onclick=async()=>{try{await api("/api/reset",{})}catch(e){}typed={};poll()};
 const KO=[...document.querySelectorAll("[data-ko]")];KO.forEach(e=>e.dataset.en=e.innerHTML);
 function setLang(l){L=l;KO.forEach(e=>e.innerHTML=l==="ko"?e.dataset.ko:e.dataset.en);document.documentElement.lang=l;$("#lang").textContent=l==="ko"?"English":"한국어";try{localStorage.setItem("dl-lang",l)}catch(_){}sig="";if(st)render()}
 $("#lang").onclick=()=>setLang(L==="ko"?"en":"ko");
-setLang(L);poll();setInterval(poll,700);
+setLang(L);poll();setInterval(poll,800);
 </script>
 </body>
 </html>

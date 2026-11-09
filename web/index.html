@@ -78,7 +78,7 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--mut);font-siz
   <div class="pill"><b>●</b> <span data-ko="라이브 데모 · Paylite API v1 → v2">Live demo · Paylite API v1 → v2</span></div>
   <h1 data-ko="<span>외부 API는 바뀝니다.</span><br>내 코드는 따라갑니다.">
     <span>APIs drift.</span><br>Your code doesn't.</h1>
-  <p class="lead" data-ko="내 서비스가 쓰는 외부 API(결제·지도·메시지 등)가 바뀌면, Driftless가 영향받는 코드를 찾아 고치고, 내 테스트로 검증한 뒤 PR로 올려 줍니다. 검증하지 못하면 코드를 건드리지 않습니다.">Subscribe your repo to the third-party APIs it depends on. When a provider ships a breaking change, Driftless finds every affected call, patches it, proves it with your tests, and opens a PR. If it can't prove it, it doesn't touch your code.</p>
+  <p class="lead" data-ko="내가 쓰는 외부 API나 지켜보고 싶은 웹페이지를 등록하세요. 바뀌면 Slack·이메일로 알려 주고, API 변화는 AI가 내 코드를 고쳐 테스트로 검증한 뒤 GitHub PR로 올립니다.">Register the third-party APIs you call and the pages you care about. When they change, you get Slack and email alerts, and API changes arrive as a GitHub PR that AI wrote and your tests verified.</p>
   <div class="oneline">
     <div class="lb" data-ko="예를 들면">For example</div>
     <ol>
@@ -98,13 +98,13 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--mut);font-siz
 </div></header>
 
 <section id="how"><div class="wrap">
-  <h2 data-ko="변경 공지에서 병합된 PR까지">From changelog to merged PR.</h2>
+  <h2 data-ko="소스 → 감지 → 고침 → 알림">Source → detect → fix → alert.</h2>
   <p class="sub" data-ko="변경 공지는 아무도 안 읽습니다. Driftless는 공지 대신 API 명세(스펙)를 읽고, 내 코드가 실제로 영향받을 때만 움직입니다.">Nobody reads changelogs. Driftless reads the spec instead, and only speaks up when your code is actually affected.</p>
   <div class="grid">
-    <div><span class="n" data-ko="01 · 감지">01 · DETECT</span><b data-ko="제공자 웹훅">Provider webhook</b><p data-ko="API 회사가 새 스펙을 발행하면 규칙으로 비교합니다. 이름 변경, 주소 이동, 새 필수 값을 추측 없이 찾습니다.">The provider publishes a new spec. Driftless diffs it with rules, not guesses: renamed fields, moved endpoints, new required params.</p></div>
-    <div><span class="n" data-ko="02 · 탐색">02 · SCAN</span><b data-ko="영향받는 호출만">Affected calls only</b><p data-ko="코드를 분석해 변경마다 그걸 쓰는 함수를 정확히 찾습니다. 영향이 없으면 조용히 있습니다.">Parses your code and maps each change to the exact functions that use it. No impact, no noise.</p></div>
-    <div><span class="n" data-ko="03 · 수정">03 · PATCH</span><b data-ko="AI가 수정과 PR 작성">AI writes the fix</b><p data-ko="Claude가 수정 코드와 PR 설명을 씁니다. 영향받은 함수 밖을 건드리면 자동으로 거부됩니다.">Claude writes the patch and the PR description. Any edit outside the affected functions is rejected.</p></div>
-    <div><span class="n" data-ko="04 · 증명">04 · PROVE</span><b data-ko="빨강 → 초록, 그다음 PR">Red → green, then PR</b><p data-ko="새 API로 내 테스트를 돌립니다. 통과하면 PR, 아니면 이유를 적은 이슈를 엽니다.">Runs your tests against the new API. A passing patch becomes a PR. Anything else becomes an issue with the reason.</p></div>
+    <div><span class="n" data-ko="01 · 소스">01 · SOURCE</span><b data-ko="API 명세 또는 웹페이지">API spec or web page</b><p data-ko="지켜볼 대상을 고릅니다. OpenAPI 명세(JSON)는 엔드포인트 단위로, 웹페이지는 크롤링해서 글 단위로 비교합니다.">Pick what to watch. OpenAPI specs (JSON) are compared by endpoint; web pages are crawled and compared by text.</p></div>
+    <div><span class="n" data-ko="02 · 감지">02 · DETECT</span><b data-ko="주기적으로 확인">Checked on a schedule</b><p data-ko="정해진 간격으로 순서대로 확인합니다. 첫 확인은 기준선, 이후엔 달라진 것만. 빈 응답은 기준선을 덮지 않습니다.">Checked one at a time on an interval. First check is the baseline; after that, only what changed. Empty responses never overwrite the baseline.</p></div>
+    <div><span class="n" data-ko="03 · 고침">03 · FIX</span><b data-ko="AI가 코드를 고침">AI fixes the code</b><p data-ko="API가 바뀌면 Claude가 영향받는 코드를 고치고 PR 설명을 씁니다. 범위 검사와 내 테스트를 통과해야만 PR이 됩니다.">When an API changes, Claude patches the affected code and writes the PR. It must pass the range guard and your tests to become a PR.</p></div>
+    <div><span class="n" data-ko="04 · 알림">04 · ALERT</span><b>Slack · Email · GitHub PR</b><p data-ko="바뀐 내용을 Slack과 이메일로 보내고, 코드 수정은 GitHub PR로 올립니다. 병합은 사람이 합니다.">Changes go to Slack and email; code fixes arrive as GitHub PRs. A human merges.</p></div>
   </div>
 </div></section>
 

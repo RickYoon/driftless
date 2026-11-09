@@ -65,7 +65,7 @@ SPEC0 = {
     },
 }
 
-S = {"spec": None, "main_spec": None, "connected": False, "repo": "", "api": "", "lang": "en", "events": [], "prs": [], "issues": [], "subscribed": True, "vendor_errors": [], "busy": False}
+S = {"sources": [], "outbox": [], "demo_page": [], "spec": None, "main_spec": None, "connected": False, "repo": "", "api": "", "lang": "en", "events": [], "prs": [], "issues": [], "subscribed": True, "vendor_errors": [], "busy": False}
 RUN_LOCK = threading.Lock()
 
 
@@ -93,7 +93,7 @@ def reset():
     git("init", "-q", "-b", "main")
     git("add", ".")
     git("commit", "-qm", "acme-shop: checkout written against Paylite v1")
-    S.update(connected=False, repo="", api="", spec=copy.deepcopy(SPEC0), main_spec=copy.deepcopy(SPEC0), events=[], prs=[], issues=[], subscribed=True, vendor_errors=[], busy=False)
+    S.update(sources=default_sources(), outbox=[], demo_page=list(DEMO_PAGE0), connected=False, repo="", api="", spec=copy.deepcopy(SPEC0), main_spec=copy.deepcopy(SPEC0), events=[], prs=[], issues=[], subscribed=True, vendor_errors=[], busy=False)
     ev("info", "acme-shop connected (read-only + PR scope). Subscribed to Paylite API updates.")
 
 
@@ -329,6 +329,8 @@ def _pipeline(old_spec, new_spec):
                  "items": [f"{u['desc']}: {u['why']}" for u in unfixable], "t": time.strftime("%H:%M:%S")}
         S["issues"].append(issue)
         ev("issue", f"Cannot verify a safe fix. Opened issue #{issue['id']} instead of a PR.", items=issue["items"])
+        rec = notify(f"Issue #{issue['id']}: {issue['title']}", issue["items"])
+        ev("notify", "Alerts: " + ", ".join(f"{k} {v}" for k, v in rec["channels"].items()))
         return
     ev("ai", "Claude is writing the fix and the PR description…")
     try:
@@ -382,6 +384,202 @@ def _pipeline(old_spec, new_spec):
             git("branch", "-q", "-D", p["branch"])
     S["prs"].append(pr)
     ev("pr", f"Opened PR #{pr['id']}: {pr['title']} — tests red → green. Waiting for your review.")
+    gh = github_pr(branch, title, body)
+    pr["github"] = gh
+    if gh != "not configured":
+        ev("notify", f"GitHub: {gh}")
+    rec = notify(f"PR #{pr['id']} ready: {title}", [c["desc"] for c in applied] + [f"tests {sum0} -> {sum1}"])
+    ev("notify", "Alerts: " + ", ".join(f"{k} {v}" for k, v in rec["channels"].items()))
+
+
+# ---------------------------------------------------------------- sources, scheduler, notifications
+import hashlib, html as htmllib, smtplib
+from email.message import EmailMessage
+
+CONFIG_FILE = os.path.join(HERE, ".config.json")
+UA = "Driftless/0.1 (change monitor; hackathon demo)"
+import ssl
+
+
+def _ssl_ctx():
+    try:
+        import certifi
+        return ssl.create_default_context(cafile=certifi.where())
+    except Exception:
+        pass
+    for p in ("/etc/ssl/cert.pem", "/usr/local/etc/openssl/cert.pem", "/opt/homebrew/etc/openssl@3/cert.pem"):
+        if os.path.exists(p):
+            return ssl.create_default_context(cafile=p)
+    return ssl.create_default_context()
+
+
+SSL_CTX = _ssl_ctx()
+
+
+def load_config():
+    try:
+        with open(CONFIG_FILE, encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+CFG = load_config()
+
+
+def save_config():
+    with open(CONFIG_FILE, "w", encoding="utf-8") as f:
+        json.dump(CFG, f, indent=1)
+
+
+def default_sources():
+    return [
+        {"id": "paylite", "type": "api", "name": "Paylite API (demo)", "url": "internal://paylite/spec", "interval": 0,
+         "repo": True, "last_check": None, "status": "watching", "last": None},
+        {"id": "changelog", "type": "page", "name": "Paylite changelog page (demo)", "url": ORIGIN + "/demo/changelog",
+         "interval": 15, "last_check": None, "status": "new", "last": None},
+    ]
+
+
+DEMO_PAGE0 = ["Paylite API changelog", "2026-10-01 · v1 released: POST /v1/charges, GET /v1/charges/{id}",
+              "Support: support@paylite.example"]
+
+
+def fetch_text(url):
+    req = urllib.request.Request(url, headers={"User-Agent": UA})
+    with urllib.request.urlopen(req, timeout=15, context=SSL_CTX) as r:
+        raw = r.read(2_000_000).decode("utf-8", "ignore")
+    return raw
+
+
+def page_lines(raw):
+    raw = re.sub(r"(?is)<(script|style|noscript).*?</\1>", " ", raw)
+    raw = re.sub(r"(?i)<(br|/p|/div|/li|/h\d|/tr|/section|/article)[^>]*>", "\n", raw)
+    txt = htmllib.unescape(re.sub(r"<[^>]+>", " ", raw))
+    return [l for l in (re.sub(r"\s+", " ", x).strip() for x in txt.split("\n")) if len(l) > 2]
+
+
+def openapi_ops(spec):
+    ops = {}
+    for p, item in (spec.get("paths") or {}).items():
+        for m, op in (item or {}).items():
+            if m.lower() in ("get", "post", "put", "patch", "delete"):
+                ops[f"{m.upper()} {p}"] = hashlib.sha1(json.dumps(op, sort_keys=True).encode()).hexdigest()
+    return ops
+
+
+def check_source(src):
+    """Fetch once, compare with last snapshot. Returns list of change lines (empty = no change)."""
+    src["last_check"] = time.strftime("%H:%M:%S")
+    if src["type"] == "page":
+        lines = page_lines(fetch_text(src["url"]))
+        if not lines:
+            src["status"] = "empty response, snapshot kept"  # never overwrite with empty (R12)
+            return []
+        old = src["last"]
+        src["last"] = lines
+        if old is None:
+            src["status"] = f"baseline saved ({len(lines)} lines)"
+            return []
+        added = [l for l in lines if l not in old]
+        removed = [l for l in old if l not in lines]
+        src["status"] = "changed" if (added or removed) else "no change"
+        return [f"+ {l}" for l in added[:8]] + [f"- {l}" for l in removed[:8]]
+    if src["type"] == "api":
+        spec = json.loads(fetch_text(src["url"]))
+        ops = openapi_ops(spec)
+        if not ops:
+            src["status"] = "no operations found, snapshot kept"
+            return []
+        old = src["last"]
+        src["last"] = ops
+        if old is None:
+            src["status"] = f"baseline saved ({len(ops)} operations)"
+            return []
+        out = [f"removed  {k}" for k in old if k not in ops] + [f"added    {k}" for k in ops if k not in old] + \
+              [f"changed  {k}" for k in ops if k in old and old[k] != ops[k]]
+        src["status"] = "changed" if out else "no change"
+        return out[:15]
+    return []
+
+
+def notify(title, lines, link=None):
+    text = title + "\n" + "\n".join("• " + l for l in lines) + (f"\n{link}" if link else "")
+    rec = {"t": time.strftime("%H:%M:%S"), "title": title, "lines": lines, "channels": {}}
+    url = CFG.get("slack_webhook")
+    if url:
+        try:
+            req = urllib.request.Request(url, data=json.dumps({"text": "*Driftless* · " + text}).encode(),
+                                         headers={"Content-Type": "application/json"}, method="POST")
+            urllib.request.urlopen(req, timeout=10, context=SSL_CTX).read()
+            rec["channels"]["slack"] = "sent"
+        except Exception as e:
+            rec["channels"]["slack"] = f"failed: {e}"
+    else:
+        rec["channels"]["slack"] = "not configured"
+    if CFG.get("smtp_host") and CFG.get("email_to"):
+        try:
+            msg = EmailMessage()
+            msg["Subject"] = "[Driftless] " + title
+            msg["From"] = CFG.get("smtp_user") or "driftless@localhost"
+            msg["To"] = CFG["email_to"]
+            msg.set_content(text)
+            with smtplib.SMTP(CFG["smtp_host"], int(CFG.get("smtp_port") or 587), timeout=15) as sm:
+                sm.starttls()
+                if CFG.get("smtp_user"):
+                    sm.login(CFG["smtp_user"], CFG.get("smtp_pass", ""))
+                sm.send_message(msg)
+            rec["channels"]["email"] = "sent"
+        except Exception as e:
+            rec["channels"]["email"] = f"failed: {e}"
+    else:
+        rec["channels"]["email"] = "not configured"
+    S["outbox"].append(rec)
+    return rec
+
+
+def github_pr(branch, title, body):
+    """Open a real PR on the configured GitHub repo. Only runs when the user saved a repo in settings."""
+    repo = CFG.get("github_repo")
+    if not repo:
+        return "not configured"
+    try:
+        git("remote", "remove", "origin")
+        git("remote", "add", "origin", f"https://github.com/{repo}.git")
+        r = git("push", "-q", "-u", "origin", branch)
+        if r.returncode != 0:
+            return "push failed: " + r.stderr.strip()[:160]
+        p = subprocess.run(["gh", "pr", "create", "--repo", repo, "--head", branch, "--base", "main",
+                            "--title", title, "--body", body or title], capture_output=True, text=True, cwd=REPO, timeout=60)
+        return p.stdout.strip() if p.returncode == 0 else "gh failed: " + p.stderr.strip()[:160]
+    except Exception as e:
+        return f"failed: {e}"
+
+
+def scheduler():
+    while True:
+        time.sleep(3)
+        for src in list(S["sources"]):  # serial on purpose (R12)
+            if src["interval"] <= 0 or src.get("paused"):
+                continue
+            last = src.get("_ts", 0)
+            if time.time() - last < src["interval"]:
+                continue
+            src["_ts"] = time.time()
+            run_check(src)
+
+
+def run_check(src):
+    try:
+        ch = check_source(src)
+    except Exception as e:
+        src["status"] = f"fetch failed: {str(e)[:80]}"
+        ev("warn", f"[{src['name']}] check failed: {e}")
+        return
+    if ch:
+        ev("source", f"[{src['name']}] change detected", items=ch)
+        rec = notify(f"{src['name']} changed", ch, src["url"])
+        ev("notify", "Alerts: " + ", ".join(f"{k} {v}" for k, v in rec["channels"].items()))
 
 
 # ---------------------------------------------------------------- http
@@ -411,10 +609,24 @@ class H(SimpleHTTPRequestHandler):
             if code != 200:
                 S["vendor_errors"].append(f"{code} {out['error']}")
             return self._json(code, out)
+        if self.path == "/demo/changelog":
+            body = "<html><body><h1>" + htmllib.escape(S["demo_page"][0]) + "</h1>" + "".join(
+                f"<p>{htmllib.escape(l)}</p>" for l in S["demo_page"][1:]) + "</body></html>"
+            data = body.encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Length", str(len(data)))
+            self.end_headers()
+            self.wfile.write(data)
+            return
         if self.path == "/api/state":
             prs = [{k: v for k, v in p.items() if k != "spec"} for p in S["prs"]]
             return self._json(200, {"spec": S["spec"], "main_version": S["main_spec"]["version"], "events": S["events"], "prs": prs, "issues": S["issues"],
                                     "subscribed": S["subscribed"], "busy": S["busy"], "connected": S["connected"], "repo": S["repo"], "api": S["api"],
+                                    "sources": [{k: v for k, v in x.items() if k not in ("last", "_ts")} for x in S["sources"]],
+                                    "outbox": S["outbox"][-20:], "demo_page": S["demo_page"],
+                                    "config": {"slack": bool(CFG.get("slack_webhook")), "email": bool(CFG.get("smtp_host") and CFG.get("email_to")),
+                                               "email_to": CFG.get("email_to", ""), "github_repo": CFG.get("github_repo", "")},
                                     "code": read(os.path.join(REPO, CLIENT))})
         return super().do_GET()
 
@@ -439,6 +651,45 @@ class H(SimpleHTTPRequestHandler):
             S["spec"] = new
             threading.Thread(target=_fire_webhook, args=(copy.deepcopy(S["main_spec"]), new), daemon=True).start()
             return self._json(200, {"ok": True, "version": new["version"]})
+        if self.path == "/api/sources":
+            url = (body.get("url") or "").strip()
+            typ = body.get("type")
+            if typ not in ("api", "page") or not re.match(r"^https?://", url):
+                return self._json(400, {"error": "type must be api|page and url must start with http(s)://"})
+            local = url.startswith(ORIGIN)
+            iv = max(int(body.get("interval") or 60), 10 if local else 60)  # be polite to real sites
+            src = {"id": f"s{len(S['sources']) + 1}", "type": typ, "name": body.get("name") or url, "url": url,
+                   "interval": iv, "last_check": None, "status": "new", "last": None}
+            S["sources"].append(src)
+            ev("info", f"Watching {src['name']} every {iv}s ({'API spec' if typ == 'api' else 'page crawl'}).")
+            return self._json(200, {"ok": True, "id": src["id"]})
+        if self.path == "/api/check":
+            src = next((x for x in S["sources"] if x["id"] == body.get("id")), None)
+            if not src or src["interval"] <= 0:
+                return self._json(400, {"error": "unknown or non-pollable source"})
+            src["_ts"] = time.time()
+            threading.Thread(target=run_check, args=(src,), daemon=True).start()
+            return self._json(200, {"ok": True})
+        if self.path == "/api/demo-page":
+            line = (body.get("line") or "").strip()
+            if not line:
+                return self._json(400, {"error": "line is required"})
+            S["demo_page"].insert(1, line[:200])
+            return self._json(200, {"ok": True})
+        if self.path == "/api/config":
+            for k in ("slack_webhook", "smtp_host", "smtp_port", "smtp_user", "smtp_pass", "email_to", "github_repo"):
+                if k in body:
+                    v = (body.get(k) or "").strip()
+                    if v:
+                        CFG[k] = v
+                    else:
+                        CFG.pop(k, None)
+            save_config()
+            return self._json(200, {"ok": True})
+        if self.path == "/api/test-alert":
+            rec = notify("Test alert from Driftless", ["If you see this, alerts work."])
+            ev("notify", "Test alert: " + ", ".join(f"{k} {v}" for k, v in rec["channels"].items()))
+            return self._json(200, rec)
         if self.path == "/api/connect":
             repo = (body.get("repo") or "").strip()
             if not repo:
@@ -506,5 +757,6 @@ def _fire_webhook(old, new):
 
 if __name__ == "__main__":
     reset()
+    threading.Thread(target=scheduler, daemon=True).start()
     print(f"Driftless → {ORIGIN}   (dashboard: {ORIGIN}/app.html)")
     ThreadingHTTPServer(("127.0.0.1", PORT), partial(H, directory=WEB)).serve_forever()
