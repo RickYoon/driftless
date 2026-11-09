@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Self-Maintaining APIs 흐름</title>
+<style>
+:root{--bg:#faf8f4;--fg:#1d1b18;--mut:#6f6a62;--card:#fff;--line:#e4dfd6}
+@media(prefers-color-scheme:dark){:root{--bg:#161512;--fg:#ece8e0;--mut:#a39d92;--card:#201e1a;--line:#3a3630}}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.6 -apple-system,"Apple SD Gothic Neo",sans-serif;padding:28px 16px 80px}
+main{max-width:980px;margin:0 auto}h1{font-size:26px;margin:0 0 4px}.sub{color:var(--mut);margin:0 0 22px}
+section{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:0 0 18px;overflow:auto}
+h2{font-size:17px;margin:0 0 10px}.mermaid{text-align:center}
+</style>
+</head>
+<body>
+<main>
+<h1>Self-Maintaining APIs 흐름</h1>
+<p class="sub">검증을 통과하지 못하면 PR을 열지 않는다. 초록은 통과, 빨강은 중단.</p>
+
+<section><h2>1. 전체 흐름 (게이트가 곧 정확도)</h2>
+<pre class="mermaid">
+flowchart TD
+  A["제공자가 스펙 v2 배포"] --> B["① Diff 엔진 (규칙 기반, LLM 아님)"]
+  B -->|"깨지는 변경 목록"| C{"영향받는 호출이 있나?"}
+  C -->|"없음"| Z["아무것도 하지 않는다"]
+  C -->|"있음"| D["③ Scanner: 호출 위치 추출"]
+  D -->|"영향받는 스니펫만"| E["비밀키 필터"]
+  E --> F["④ Patcher (LLM): 수정안 생성"]
+  F --> G{"허용 범위 안의 diff인가?"}
+  G -->|"아니오"| X["거부"]
+  G -->|"예"| H["⑤-a 정적 검증: 새 스펙과 대조"]
+  H -->|"실패"| I["이슈만 생성: 사람 확인 필요 + 이유"]
+  H -->|"통과"| J["⑤-b 동적 검증: mock 서버 + 고객 테스트"]
+  J -->|"실패"| I
+  J -->|"통과"| K["⑥ PR 생성 (브랜치만, main 직접 쓰기 없음)"]
+  K --> L["고객이 검토 후 병합"]
+  classDef ok fill:#dcf1e3,stroke:#2f7a4f,color:#1d1b18
+  classDef bad fill:#fbe4de,stroke:#b4442f,color:#1d1b18
+  class K,L ok
+  class X,I bad
+</pre></section>
+
+<section><h2>2. 시간 순서 (90초 데모 장면)</h2>
+<pre class="mermaid">
+sequenceDiagram
+  autonumber
+  participant P as 제공자 스펙
+  participant E as 엔진
+  participant R as 고객 저장소
+  participant L as LLM
+  participant M as mock 서버
+  P->>E: v2 공개 (스펙 변경 3건)
+  E->>E: 스펙 비교, 깨지는 변경 분류
+  E->>R: 읽기 전용으로 호출 위치 검색
+  R-->>E: 영향받는 스니펫 3곳
+  E->>L: 스니펫 + 변경 내용만 전송
+  L-->>E: 수정안
+  E->>M: v2 mock에 대해 테스트 실행
+  M-->>E: 패치 전 실패 / 패치 후 통과
+  E->>R: 브랜치 생성, PR 열기 (근거와 전후 결과 포함)
+  Note over E,R: 1건은 검증 실패, PR 없이 이슈만 열림
+</pre></section>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script>
+<script>
+mermaid.initialize({startOnLoad:true,theme:matchMedia("(prefers-color-scheme:dark)").matches?"dark":"neutral",securityLevel:"loose"});
+</script>
+</body>
+</html>

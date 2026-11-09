@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Driftless — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#000;--fg:#ededed;--mut:#a1a1a1;--dim:#6b6b6b;--line:#2e2e2e;--card:#0a0a0a;--ok:#3ecf8e;--bad:#ff6166;--blue:#52a8ff;--amber:#f5a524;--purple:#a78bfa}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.55 Geist,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+nav{display:flex;align-items:center;gap:14px;height:56px;padding:0 20px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#000;z-index:5}
+.logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px}
+.logo i{width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-bottom:14px solid #fff}
+.slash{color:#444;font-size:20px}
+.proj{font-weight:600}.badge{font-size:11px;font-weight:600;border:1px solid var(--line);border-radius:999px;padding:2px 8px;color:var(--mut)}
+.badge.pro{border-color:#fff;color:#fff}
+.sp{flex:1}
+.btn{display:inline-flex;align-items:center;gap:6px;border-radius:7px;padding:7px 12px;font:inherit;font-size:13px;font-weight:600;border:1px solid var(--line);background:transparent;color:var(--fg);cursor:pointer;transition:.15s}
+.btn:hover{background:#1a1a1a}.btn.w{background:#fff;color:#000;border-color:#fff}.btn.w:hover{background:#ddd}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.toggle{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--mut);cursor:pointer;user-select:none}
+.sw{width:34px;height:20px;border-radius:999px;background:#333;position:relative;transition:.2s}.sw::after{content:"";position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#fff;transition:.2s}
+.toggle.on .sw{background:var(--ok)}.toggle.on .sw::after{left:17px}
+main{display:grid;grid-template-columns:minmax(300px,1fr) minmax(320px,1.15fr) minmax(340px,1.25fr);gap:0;min-height:calc(100vh - 56px)}
+.col{border-right:1px solid var(--line);padding:18px;overflow:auto;max-height:calc(100vh - 56px)}.col:last-child{border-right:0}
+.h{display:flex;align-items:center;gap:8px;margin-bottom:4px}.h b{font-size:15px}
+.cap{color:var(--mut);font-size:12.5px;margin:0 0 14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:12px}
+.lbl{font:500 11px "Geist Mono",monospace;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.ep{border-top:1px solid #1c1c1c;padding:9px 0}.ep:first-of-type{border-top:0;padding-top:0}
+.m{font:600 11px "Geist Mono",monospace;padding:2px 6px;border-radius:4px;margin-right:6px}
+.m.POST{background:rgba(62,207,142,.14);color:var(--ok)}.m.GET{background:rgba(82,168,255,.14);color:var(--blue)}
+.path{font:500 13px "Geist Mono",monospace}
+.fields{font:12px "Geist Mono",monospace;color:var(--mut);margin-top:4px}.fields span{color:var(--fg)}
+.chg{display:flex;flex-direction:column;gap:7px}
+.chg button{text-align:left;justify-content:flex-start;width:100%}
+.chg button small{color:var(--dim);font-weight:500;margin-left:auto}
+.pend{font:12.5px "Geist Mono",monospace;color:var(--amber);margin:8px 0 0;padding-left:16px}
+textarea{width:100%;min-height:220px;background:#050505;color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:10px;font:12px/1.5 "Geist Mono",monospace;resize:vertical}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.tl{position:relative;padding-left:22px}
+.tl::before{content:"";position:absolute;left:7px;top:4px;bottom:4px;width:1px;background:var(--line)}
+.e{position:relative;margin-bottom:14px;animation:in .25s}
+@keyframes in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.e::before{content:"";position:absolute;left:-19px;top:5px;width:9px;height:9px;border-radius:50%;background:var(--c,#555);box-shadow:0 0 0 3px #000}
+.e .t{font:11px "Geist Mono",monospace;color:var(--dim)}.e .k{font:600 11px "Geist Mono",monospace;color:var(--c);margin-left:6px;text-transform:uppercase}
+.e .msg{margin-top:1px}.e ul{margin:4px 0 0;padding-left:16px;font:12px "Geist Mono",monospace;color:var(--mut)}
+.empty{color:var(--dim);font-size:13px}
+.spin{display:inline-block;width:10px;height:10px;border:2px solid #555;border-top-color:#fff;border-radius:50%;animation:sp 1s linear infinite;margin-right:6px;vertical-align:-1px}
+@keyframes sp{to{transform:rotate(360deg)}}
+pre.code{margin:0;font:12px/1.6 "Geist Mono",monospace;white-space:pre;overflow:auto;color:var(--mut)}
+pre.diff{margin:8px 0 0;font:12px/1.6 "Geist Mono",monospace;white-space:pre;overflow:auto;background:#050505;border:1px solid var(--line);border-radius:8px;padding:8px 0}
+pre.diff div{padding:0 10px}.add{background:rgba(62,207,142,.12);color:#9ff0c9}.del{background:rgba(255,97,102,.12);color:#ffb3b5}.hunk{color:var(--blue)}
+.prh{display:flex;align-items:center;gap:8px}.prh b{font-size:14px}
+.st{font:600 11px "Geist Mono",monospace;border-radius:999px;padding:2px 8px}
+.st.open{background:rgba(62,207,142,.14);color:var(--ok)}.st.merged{background:rgba(167,139,250,.16);color:var(--purple)}.st.superseded{background:#1a1a1a;color:var(--dim)}.st.issue{background:rgba(245,165,36,.15);color:var(--amber)}
+.checks{display:flex;gap:8px;margin:8px 0 4px;flex-wrap:wrap;font:12px "Geist Mono",monospace}
+.checks span{border:1px solid var(--line);border-radius:6px;padding:2px 8px}.red{color:var(--bad)}.green{color:var(--ok)}
+.chl{margin:6px 0 0;padding-left:16px;color:var(--mut);font-size:12.5px}
+details summary{cursor:pointer;color:var(--mut);font-size:12.5px;margin-top:6px}
+@media(max-width:1100px){main{grid-template-columns:1fr}.col{max-height:none;border-right:0;border-bottom:1px solid var(--line)}}
+</style>
+</head>
+<body>
+<nav>
+  <a class="logo" href="/"><i></i>Driftless</a><span class="slash">/</span><span class="proj">acme-shop</span><span class="badge pro" id="plan">Pro</span>
+  <span class="sp"></span>
+  <label class="toggle on" id="sub"><span class="sw"></span><span id="subtxt">Subscribed to Paylite</span></label>
+  <button class="btn" id="reset">Reset demo</button>
+</nav>
+<main>
+  <!-- provider -->
+  <div class="col">
+    <div class="h"><b>Paylite</b><span class="badge" id="ver">v1</span><span class="badge">third-party API</span></div>
+    <p class="cap">You are the API provider here. Change the contract and publish. Driftless is notified by webhook.</p>
+    <div class="card"><div class="lbl">Live contract</div><div id="eps"></div></div>
+    <div class="card"><div class="lbl">Ship a change</div>
+      <div class="chg" id="chg"></div>
+      <ol class="pend" id="pend"></ol>
+      <div class="row"><button class="btn w" id="pub" disabled>Publish</button><button class="btn" id="discard" disabled>Discard</button><span class="sp"></span><button class="btn" id="raw">Edit JSON</button></div>
+      <div id="rawbox" style="display:none;margin-top:10px"><textarea id="json" spellcheck="false"></textarea><div class="row"><button class="btn" id="applyjson">Use this JSON as draft</button><span class="empty" id="jsonerr"></span></div></div>
+    </div>
+  </div>
+  <!-- pipeline -->
+  <div class="col">
+    <div class="h"><b>Pipeline</b><span id="busy"></span></div>
+    <p class="cap">Every step Driftless takes, live. Gates stop the run when a fix can't be proven.</p>
+    <div class="tl" id="tl"></div>
+  </div>
+  <!-- customer repo -->
+  <div class="col">
+    <div class="h"><b>acme-shop</b><span class="badge" id="mainv">main · Paylite v1</span></div>
+    <p class="cap">Customer repository. Driftless can read it and open PRs. Only you can merge.</p>
+    <div id="prs"></div>
+    <div id="issues"></div>
+    <div class="card"><div class="lbl">main / shop_client.py</div><pre class="code" id="code"></pre></div>
+  </div>
+</main>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const COLOR={hook:"#52a8ff",diff:"#ededed",scan:"#a78bfa",test:"#f5a524",patch:"#52a8ff",pr:"#3ecf8e",merge:"#a78bfa",issue:"#f5a524",warn:"#f5a524",error:"#ff6166",info:"#6b6b6b"};
+let st=null,draft=null,pend=[],seen=-1,lastSig="";
+const clone=o=>JSON.parse(JSON.stringify(o));
+const keyOf=(obj,canon)=>Object.keys(obj||{}).find(k=>obj[k].canon===canon);
+
+const CHANGES=[
+ {id:"path",label:s=>{const p=s.endpoints.create_charge.path;const n=(+(p.match(/\/v(\d+)\//)||[0,1])[1])+1;return `Move endpoints to /v${n}/payments`},tag:"path",
+  ok:s=>true,apply:s=>{for(const e of Object.values(s.endpoints)){const n=(+(e.path.match(/\/v(\d+)\//)||[0,1])[1])+1;e.path=e.path.replace(/\/v\d+\/(charges|payments)/,`/v${n}/payments`)}},desc:s=>"Endpoints move to "+s.endpoints.create_charge.path.replace(/\/v\d+/,"/v"+((+(s.endpoints.create_charge.path.match(/\/v(\d+)\//)||[0,1])[1])))},
+ {id:"state",label:()=>"Rename response field status → state",tag:"field",
+  ok:s=>Object.values(s.endpoints).some(e=>keyOf(e.response,"status")==="status"),
+  apply:s=>{for(const e of Object.values(s.endpoints)){const k=keyOf(e.response,"status");if(k==="status"){e.response.state=e.response.status;delete e.response.status}}}},
+ {id:"cur",label:()=>"Rename request field currency → currency_code",tag:"field",
+  ok:s=>keyOf(s.endpoints.create_charge?.request,"currency")==="currency",
+  apply:s=>{const r=s.endpoints.create_charge.request;r.currency_code=r.currency;delete r.currency}},
+ {id:"idem",label:()=>"Require idempotency_key on create",tag:"param",
+  ok:s=>!keyOf(s.endpoints.create_charge?.request,"idem"),
+  apply:s=>{s.endpoints.create_charge.request.idempotency_key={type:"str",required:true,canon:"idem","x-migration-default":"str(uuid.uuid4())"}}},
+ {id:"rm",label:()=>"Remove status from GET charge",tag:"no safe fix",
+  ok:s=>!!keyOf(s.endpoints.get_charge?.response,"status"),
+  apply:s=>{const r=s.endpoints.get_charge.response;delete r[keyOf(r,"status")]}}];
+
+async function api(p,b){const r=await fetch(p,b?{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)}:undefined);const j=await r.json();if(!r.ok)throw new Error(j.error||r.status);return j}
+
+function drawProvider(){
+  const s=draft||st.spec;
+  $("#ver").textContent="v"+st.spec.version+(draft?" · draft":"");
+  $("#eps").innerHTML=Object.entries(s.endpoints).map(([n,e])=>`<div class="ep"><span class="m ${e.method}">${e.method}</span><span class="path">${esc(e.path)}</span>
+   <div class="fields">${Object.keys(e.request||{}).length?`req { <span>${Object.entries(e.request).map(([k,v])=>k+(v.required?"*":"")).join(", ")}</span> }<br>`:""}res { <span>${Object.keys(e.response).join(", ")}</span> }</div></div>`).join("");
+  $("#chg").innerHTML=CHANGES.map((c,i)=>`<button class="btn" data-i="${i}" ${c.ok(s)&&!st.busy?"":"disabled"}>${esc(c.label(s))}<small>${c.tag}</small></button>`).join("");
+  document.querySelectorAll("#chg button").forEach(b=>b.onclick=()=>{const c=CHANGES[+b.dataset.i];if(!draft)draft=clone(st.spec);const before=c.label(draft);c.apply(draft);pend.push(before);drawProvider()});
+  $("#pend").innerHTML=pend.map(p=>`<li>${esc(p)}</li>`).join("");
+  $("#pub").disabled=!draft||st.busy;$("#discard").disabled=!draft;
+  $("#pub").textContent=draft?`Publish v${st.spec.version+1}`:"Publish";
+}
+function drawTimeline(){
+  const ev=st.events;
+  if(ev.length===seen)return;seen=ev.length;
+  $("#tl").innerHTML=ev.slice().reverse().map(e=>`<div class="e" style="--c:${COLOR[e.kind]||"#555"}"><span class="t">${e.t}</span><span class="k">${e.kind}</span><div class="msg">${esc(e.msg)}</div>${e.items&&e.items.length?`<ul>${e.items.map(i=>`<li>${esc(i)}</li>`).join("")}</ul>`:""}</div>`).join("")||`<p class="empty">Waiting for a provider change…</p>`;
+}
+function diffHtml(d){return d.split("\n").map(l=>{const c=l.startsWith("+++")||l.startsWith("---")?"":l.startsWith("@@")?"hunk":l.startsWith("+")?"add":l.startsWith("-")?"del":"";return `<div class="${c}">${esc(l)||" "}</div>`}).join("")}
+function drawRepo(){
+  $("#mainv").textContent="main · Paylite v"+st.main_version;
+  $("#code").textContent=st.code;
+  $("#prs").innerHTML=st.prs.slice().reverse().map(p=>`<div class="card"><div class="prh"><span class="st ${p.state}">${p.state}</span><b>#${p.id} ${esc(p.title)}</b></div>
+   <div class="checks"><span>before <b class="red">${esc(p.before)}</b></span><span>after <b class="green">${esc(p.after)}</b></span><span>${esc(p.branch)}</span></div>
+   <ul class="chl">${p.changes.map(c=>`<li>${esc(c)}</li>`).join("")}</ul>
+   <details ${p.state==="open"?"open":""}><summary>Files changed · shop_client.py</summary><pre class="diff">${diffHtml(p.diff)}</pre></details>
+   ${p.state==="open"?`<div class="row"><button class="btn w" onclick="merge(${p.id})">Merge pull request</button></div>`:""}</div>`).join("");
+  $("#issues").innerHTML=st.issues.slice().reverse().map(i=>`<div class="card"><div class="prh"><span class="st issue">issue</span><b>#${i.id} ${esc(i.title)}</b></div><ul class="chl">${i.items.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`).join("");
+}
+async function poll(){
+  try{st=await api("/api/state")}catch(e){$("#busy").innerHTML=`<span class="badge" style="color:var(--bad)">server offline</span>`;return}
+  $("#busy").innerHTML=st.busy?`<span class="badge"><span class="spin"></span>running</span>`:"";
+  const t=$("#sub");t.classList.toggle("on",st.subscribed);$("#subtxt").textContent=st.subscribed?"Subscribed to Paylite":"Subscription paused";$("#plan").textContent=st.subscribed?"Pro":"Free";
+  const sig=JSON.stringify([st.spec.version,st.busy,st.prs.map(p=>p.state),st.issues.length,st.main_version]);
+  if(sig!==lastSig){lastSig=sig;drawProvider();drawRepo()}
+  drawTimeline();
+}
+async function merge(id){try{await api("/api/merge",{id});await poll()}catch(e){alertBox(e.message)}}
+function alertBox(m){$("#jsonerr").textContent=m}
+$("#pub").onclick=async()=>{try{await api("/api/publish",{spec:draft});draft=null;pend=[];lastSig="";await poll()}catch(e){alertBox(e.message)}};
+$("#discard").onclick=()=>{draft=null;pend=[];drawProvider()};
+$("#raw").onclick=()=>{const b=$("#rawbox");const on=b.style.display==="none";b.style.display=on?"block":"none";if(on)$("#json").value=JSON.stringify(draft||st.spec,null,2)};
+$("#applyjson").onclick=()=>{try{const j=JSON.parse($("#json").value);if(!j.endpoints)throw new Error("needs endpoints");draft=j;pend.push("Edited JSON");$("#jsonerr").textContent="";drawProvider()}catch(e){$("#jsonerr").textContent="Invalid: "+e.message}};
+$("#sub").onclick=async()=>{await api("/api/subscribe",{on:!st.subscribed});lastSig="";await poll()};
+$("#reset").onclick=async()=>{try{await api("/api/reset",{});draft=null;pend=[];seen=-1;lastSig="";await poll()}catch(e){alertBox(e.message)}};
+poll();setInterval(poll,800);
+</script>
+</body>
+</html>

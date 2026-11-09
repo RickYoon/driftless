@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Driftless — APIs drift. Your code doesn't.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#000;--fg:#ededed;--mut:#a1a1a1;--line:#2e2e2e;--card:#0a0a0a;--acc:#fff;--ok:#3ecf8e;--bad:#ff6166;--blue:#52a8ff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 Geist,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+nav{position:sticky;top:0;z-index:5;background:rgba(0,0,0,.75);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;gap:24px;height:60px}
+.logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:17px}
+.logo i{width:0;height:0;border-left:9px solid transparent;border-right:9px solid transparent;border-bottom:16px solid #fff}
+nav .links{display:flex;gap:20px;color:var(--mut);font-size:14px}nav .links a:hover{color:var(--fg)}
+.sp{flex:1}
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:8px;padding:9px 16px;font-size:14px;font-weight:600;border:1px solid var(--line);transition:.15s}
+.btn.w{background:#fff;color:#000;border-color:#fff}.btn.w:hover{background:#ddd}
+.btn.g:hover{background:#1a1a1a}
+.hero{text-align:center;padding:96px 0 56px;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:-40% -10% auto;height:520px;background:radial-gradient(closest-side,rgba(82,168,255,.18),transparent);pointer-events:none}
+.pill{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:13px;color:var(--mut);margin-bottom:22px}
+.pill b{color:var(--ok)}
+h1{font-size:clamp(38px,7vw,68px);line-height:1.05;letter-spacing:-.04em;margin:0 0 18px;font-weight:800}
+h1 span{background:linear-gradient(90deg,#fff,#7d7d7d);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{color:var(--mut);font-size:clamp(17px,2.2vw,20px);max-width:640px;margin:0 auto 30px}
+.cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.term{margin:56px auto 0;max-width:760px;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;font:13.5px/1.75 "Geist Mono",monospace}
+.term .bar{display:flex;gap:6px;padding:10px 14px;border-bottom:1px solid var(--line)}.term .bar i{width:10px;height:10px;border-radius:50%;background:#333}
+.term pre{margin:0;padding:16px 18px;white-space:pre-wrap;color:var(--mut)}
+.term .k{color:var(--blue)}.term .o{color:var(--ok)}.term .r{color:var(--bad)}.term .w{color:var(--fg)}
+section{padding:72px 0;border-top:1px solid var(--line)}
+h2{font-size:clamp(28px,4vw,40px);letter-spacing:-.03em;margin:0 0 10px;font-weight:700}
+.sub{color:var(--mut);margin:0 0 36px;max-width:620px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.grid>div{padding:22px;border-right:1px solid var(--line)}.grid>div:last-child{border-right:0}
+.grid .n{font:500 12px "Geist Mono",monospace;color:var(--mut)}.grid b{display:block;margin:8px 0 6px;font-size:16px}.grid p{margin:0;color:var(--mut);font-size:14px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px}
+.card ul{margin:10px 0 0;padding:0;list-style:none}.card li{padding:7px 0;border-top:1px solid #1c1c1c;color:var(--mut);font-size:14.5px}.card li:first-child{border-top:0}
+.card li b{color:var(--fg);font-weight:600}
+.price{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.tier{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:24px;display:flex;flex-direction:column}
+.tier.hot{border-color:#fff;box-shadow:0 0 0 1px #fff}
+.tier h3{margin:0;font-size:16px}.tier .amt{font-size:38px;font-weight:700;letter-spacing:-.03em;margin:10px 0 2px}.tier .amt small{font-size:15px;color:var(--mut);font-weight:500}
+.tier p{color:var(--mut);font-size:14px;margin:0 0 14px}
+.tier ul{list-style:none;margin:0 0 20px;padding:0;flex:1}.tier li{font-size:14px;padding:5px 0;color:var(--fg)}.tier li::before{content:"✓  ";color:var(--ok)}
+.note{color:var(--mut);font-size:13px;margin-top:14px}
+footer{border-top:1px solid var(--line);padding:28px 0;color:var(--mut);font-size:13px}
+@media(max-width:820px){.grid{grid-template-columns:1fr 1fr}.grid>div:nth-child(2){border-right:0}.grid>div{border-bottom:1px solid var(--line)}.two,.price{grid-template-columns:1fr}nav .links{display:none}}
+</style>
+</head>
+<body>
+<nav><div class="wrap"><a class="logo" href="/"><i></i>Driftless</a><div class="links"><a href="#how">How it works</a><a href="#trust">Security</a><a href="#pricing">Pricing</a></div><span class="sp"></span><a class="btn w" href="/app.html">Open dashboard</a></div></nav>
+
+<header class="hero"><div class="wrap">
+  <div class="pill"><b>●</b> Live demo · Paylite API v1 → v2</div>
+  <h1><span>APIs drift.</span><br>Your code doesn't.</h1>
+  <p class="lead">Subscribe your repo to the APIs it depends on. When a provider ships a breaking change, Driftless finds every affected call, patches it, proves it with your tests, and opens a PR. If it can't prove it, it doesn't touch your code.</p>
+  <div class="cta"><a class="btn w" href="/app.html">Try the live demo →</a><a class="btn g" href="#how">How it works</a></div>
+  <div class="term"><div class="bar"><i></i><i></i><i></i></div><pre><span class="k">webhook</span>  Paylite published <span class="w">v2</span>
+<span class="k">diff</span>     POST /v1/charges → <span class="w">/v2/payments</span> · response <span class="w">status → state</span> · breaking
+<span class="k">scan</span>     shop_client.py:17  create_charge()   shop_client.py:22  charge_status()
+<span class="k">test</span>     main vs live API      <span class="r">FAILED (errors=2)</span>   404 no such endpoint POST /v1/charges
+<span class="k">patch</span>    scoped to 2 functions · range guard <span class="o">passed</span>
+<span class="k">test</span>     patched vs v2         <span class="o">OK</span>
+<span class="k">pr</span>       <span class="w">#1 Adapt to Paylite API v2</span>  red → green · waiting for your review</pre></div>
+</div></header>
+
+<section id="how"><div class="wrap">
+  <h2>From changelog to merged PR.</h2>
+  <p class="sub">Nobody reads changelogs. Driftless reads the spec instead, and only speaks up when your code is actually affected.</p>
+  <div class="grid">
+    <div><span class="n">01 · DETECT</span><b>Provider webhook</b><p>The API provider publishes a new spec. Driftless diffs it with rules, not guesses: renamed fields, moved endpoints, new required params.</p></div>
+    <div><span class="n">02 · SCAN</span><b>Affected calls only</b><p>Parses your code and maps each change to the exact functions that use it. No impact, no noise.</p></div>
+    <div><span class="n">03 · PATCH</span><b>Scoped fix</b><p>Edits only inside the affected functions. A range guard rejects any patch that reaches further.</p></div>
+    <div><span class="n">04 · PROVE</span><b>Red → green, then PR</b><p>Runs your tests against the new API. Passing patch becomes a PR. Anything else becomes an issue with the reason.</p></div>
+  </div>
+</div></section>
+
+<section id="trust"><div class="wrap">
+  <h2>Built to be trusted with your codebase.</h2>
+  <p class="sub">You give a tool access to your repo only if it is careful. These are the rules it follows.</p>
+  <div class="two">
+    <div class="card"><b>What it can do</b><ul>
+      <li><b>Read</b> your repo and <b>open branches and PRs.</b> Never pushes to main.</li>
+      <li><b>Patch only affected functions.</b> Out-of-range edits are rejected.</li>
+      <li><b>Open a PR only when tests pass</b> against the new API version.</li>
+    </ul></div>
+    <div class="card"><b>What it won't do</b><ul>
+      <li><b>Never guesses</b> when a field is removed with no replacement. It opens an issue.</li>
+      <li><b>Never merges.</b> A human reviews every change.</li>
+      <li><b>Never sends your code anywhere</b> in this build. Patches are deterministic codemods run locally.</li>
+    </ul></div>
+  </div>
+</div></section>
+
+<section id="pricing"><div class="wrap">
+  <h2>Pricing</h2>
+  <p class="sub">Subscribe per repo. Every plan opens verified PRs only.</p>
+  <div class="price">
+    <div class="tier"><h3>Hobby</h3><div class="amt">$0</div><p>For side projects.</p><ul><li>1 repo · 1 API</li><li>Daily spec checks</li><li>Verified PRs</li></ul><a class="btn g" href="/app.html">Start free</a></div>
+    <div class="tier hot"><h3>Pro</h3><div class="amt">$20<small> /repo /mo</small></div><p>For teams shipping on third-party APIs.</p><ul><li>Unlimited APIs</li><li>Instant provider webhooks</li><li>Verified PRs + issues</li><li>Slack alerts</li></ul><a class="btn w" href="/app.html">Start Pro trial</a></div>
+    <div class="tier"><h3>Provider</h3><div class="amt">Custom</div><p>For API companies: ship breaking changes without breaking customers.</p><ul><li>"Install our update agent" for your users</li><li>Migration defaults in your spec</li><li>Adoption analytics</li></ul><a class="btn g" href="/app.html">Talk to us</a></div>
+  </div>
+  <p class="note">Beta pricing for the hackathon demo. Paylite is a fictional API used for the demo.</p>
+</div></section>
+
+<footer><div class="wrap">Driftless · built at c0mpiled-17 Seoul · Paylite is fictional</div></footer>
+</body>
+</html>
