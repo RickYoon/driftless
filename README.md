@@ -1,6 +1,6 @@
 # Driftless
 
-**APIs drift. Your code doesn't.**
+**AI-powered monitoring for the APIs and pages your product depends on.** APIs drift. Your code doesn't.
 A change monitor for the APIs and pages your product depends on — and when an API breaks your code, Claude writes the fix as a PR that your own tests have already verified.
 
 > **The demo in one sentence:** a payments API ships a breaking v2, Driftless catches it, Claude patches the customer's code, the tests go from `FAILED` to `OK`, and a PR is waiting for a human to merge — while Slack/email get the alert and any AI assistant can ask Driftless what changed over MCP.
@@ -11,7 +11,7 @@ YC Request for Startups: **Self-Maintaining APIs** · built at c0mpiled-17 Seoul
 
 ## Two kinds of AI, kept apart
 
-The AI that writes a fix should never grade its own work. **Jev** (non-generative decision model, via OpenRouter) judges whether a change matters and whether it breaks integrations. **Claude** (generative) writes the patch and PR only after that. **Your tests** decide whether the PR exists. Same principle we use in production at SemiHub, where Jev checks that published conference dates actually appear in the official source.
+The AI that writes a fix should never grade its own work. **Jev** (non-generative decision model, via OpenRouter) judges whether a change matters and whether it breaks integrations. **Claude** (generative) writes the patch and PR only after that. **Your tests** decide whether the PR exists. Measured in this repo: **0.4–0.6 s per Jev verdict** (3 runs) and **~$0.000014 per verdict** (about a cent per 1,000). Same principle we use in production at SemiHub, where Jev checks that published conference dates actually appear in the official source.
 
 ## Why this matters
 

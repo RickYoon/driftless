@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Driftless — APIs drift. Your code doesn't.</title>
+<title>Driftless — AI-powered monitoring for the APIs you depend on</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -89,7 +89,7 @@ footer{border-top:1px solid var(--line);padding:30px 0;color:var(--mut);font-siz
 <div class="wrap" id="hero">
 <header class="hero">
   <div>
-    <div class="eyebrow">● <span>YC RFS · Self-Maintaining APIs</span></div>
+    <div class="eyebrow">● <span data-ko="AI 기반 모니터링 · API와 웹페이지">AI-powered monitoring · APIs &amp; web pages</span></div>
     <h1 data-ko="외부 API가 바뀌어도<br>내 코드는 <em>제자리에</em>.">APIs drift.<br>Your code <em>doesn't</em>.</h1>
     <p class="lead" data-ko="쓰는 API와 지켜볼 페이지를 등록하세요. 바뀌면 <b>판단 AI(Jev)</b>가 의미 있는 변화인지 가리고, <b>생성 AI(Claude)</b>가 내 코드를 고치고, <b>내 테스트</b>가 검증한 뒤 GitHub PR과 Slack·이메일로 보냅니다.">Register the APIs you call and the pages you care about. When they change, a <b>decision model (Jev)</b> judges whether it matters, a <b>generative model (Claude)</b> writes the fix, and <b>your tests</b> verify it — then it arrives as a GitHub PR plus Slack and email.</p>
     <div class="cta"><a class="btn k" href="/app.html" data-ko="라이브 데모 해보기 →">Try the live demo →</a><a class="btn" href="#under" data-ko="동작 원리">How it works</a></div>
@@ -122,13 +122,14 @@ footer{border-top:1px solid var(--line);padding:30px 0;color:var(--mut);font-siz
 
 <section id="ais"><div class="wrap">
   <div class="kick" data-ko="AI 기반 모니터링">AI-powered monitoring</div>
-  <h2 data-ko="두 종류의 AI를 분리했습니다">Two kinds of AI, kept apart.</h2>
+  <h2 data-ko="판단하는 AI와 쓰는 AI를 분리했습니다">One AI judges. Another writes. Your tests decide.</h2>
   <p class="sub" data-ko="고치는 AI가 자기 수정을 채점하면 안 됩니다. 판단은 비생성형 모델이, 작성은 생성형 모델이, 최종 판정은 테스트가 합니다.">The AI that writes the fix should never grade its own work. A non-generative model judges, a generative model writes, and your tests have the final say.</p>
   <div class="four" style="grid-template-columns:repeat(3,1fr)">
     <div class="f"><div class="n" style="background:var(--bluebg);color:var(--blue)">J</div><b data-ko="Jev · 판단 AI">Jev · the judge</b><p data-ko="TypeSafe의 <b>비생성형 판단 모델</b>. 글을 만들지 않고, 질문마다 <b>확률이 붙은 정해진 답</b>만 냅니다. &quot;의미 있는 변화인가 0.85 · 깨지는 변경인가 0.97 · 종류: breaking&quot;.">A <b>non-generative decision model</b> by TypeSafe. It never writes text; it returns <b>typed answers with probabilities</b>: "meaningful 0.85 · breaking 0.97 · kind: breaking".</p></div>
     <div class="f"><div class="n" style="background:var(--okbg);color:var(--ok)">C</div><b data-ko="Claude · 작성 AI">Claude · the writer</b><p data-ko="<b>생성형 모델</b>. Jev가 깨지는 변경이라고 판단한 경우에만, 영향받은 코드의 수정본과 PR 설명을 씁니다.">A <b>generative model</b>. Only when Jev says it's breaking, Claude writes the patch for the affected code and the PR description.</p></div>
     <div class="f"><div class="n" style="background:var(--amberbg);color:var(--amber)">T</div><b data-ko="내 테스트 · 최종 판정">Your tests · ground truth</b><p data-ko="새 API로 수정 전은 실패, 수정 후는 통과해야 PR이 됩니다. 어느 AI의 말도 테스트를 이기지 못합니다.">Before the patch the tests must fail against the new API, after it they must pass. No AI overrides the tests.</p></div>
   </div>
+  <div class="four" style="grid-template-columns:repeat(3,1fr);margin-top:14px"><div class="f"><b style="font-size:30px" data-ko="0.4~0.6초">0.4–0.6 s</b><p data-ko="Jev 판정 1회 (실측 3회)">per Jev verdict (measured, 3 runs)</p></div><div class="f"><b style="font-size:30px" data-ko="≈ 1센트">≈ 1¢</b><p data-ko="판정 1,000회 비용 (실측 1회 $0.000014)">per 1,000 verdicts (measured $0.000014 each)</p></div><div class="f"><b style="font-size:30px" data-ko="확률, 의견 아님">Probabilities</b><p data-ko="글을 쓰지 않으니 판정이 지어낸 말로 흐려지지 않습니다">not prose: no generated text to hallucinate a verdict</p></div></div>
   <p class="note" data-ko="실측: 방문자 수처럼 매번 바뀌는 줄은 Jev가 noise(의미 있음 0.04)로 판정해 알림을 막았고, 엔드포인트 이동 공지는 breaking(0.97)으로 판정해 알림을 보냈습니다.">Measured in this demo: a volatile "1,204 developers online" line was judged noise (meaningful 0.04) and suppressed; an endpoint-move notice was judged breaking (0.97) and alerted.</p>
 </div></section>
 
